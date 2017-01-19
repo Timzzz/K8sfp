@@ -10,11 +10,12 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import org.k8sfp.interfaces.IK8sDataElement;
+import org.k8sfp.interfaces.IK8sDataElementTimeseries;
 
 /**
  *
  */
-public class K8sCommonDataElement implements IK8sDataElement {
+public class K8sCommonDataElement implements IK8sDataElementTimeseries {
 
     private final Date time;
     private final SortedMap<String, Object> values;

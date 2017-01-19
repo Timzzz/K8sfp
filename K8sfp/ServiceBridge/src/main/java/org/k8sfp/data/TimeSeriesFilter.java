@@ -9,6 +9,7 @@ package org.k8sfp.data;
 import java.util.Date;
 import java.util.List;
 import org.k8sfp.interfaces.IK8sDataElement;
+import org.k8sfp.interfaces.IK8sDataElementTimeseries;
 
 /**
  *
@@ -18,7 +19,7 @@ public class TimeSeriesFilter {
     public static void filter(List<IK8sDataElement> list, int minDistanceInSeconds) {
         Date last = null;
         for(int i=0; i<list.size(); ++i) {
-            IK8sDataElement it = list.get(i);
+            IK8sDataElementTimeseries it = (IK8sDataElementTimeseries)list.get(i);
             Date curr = it.getTime();
             if(last == null){
                 last = curr;

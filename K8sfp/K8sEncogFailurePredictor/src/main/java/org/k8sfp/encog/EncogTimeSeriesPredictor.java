@@ -20,12 +20,13 @@ import org.encog.util.arrayutil.VectorWindow;
 import org.encog.util.csv.ReadCSV;
 import org.k8sfp.data.K8sCommonDataElement;
 import org.k8sfp.interfaces.IK8sDataElement;
+import org.k8sfp.interfaces.IK8sDataElementTimeseries;
 import org.k8sfp.interfaces.IK8sDataSource;
 import org.k8sfp.interfaces.IK8sPredictor;
 import org.k8sfp.interfaces.IK8sTimeSeriesPredictor;
 import org.k8sfp.interfaces.special.IK8sVersatileDataSource;
 
-class EncogTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
+public class EncogTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
 
     private IK8sDataSource dataSource;
     private final EncogTimeSeriesPredictorConfig conf;
@@ -33,13 +34,14 @@ class EncogTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
     
     private String fieldName = "cpu_usage_total";
     
-    EncogTimeSeriesPredictor(EncogTimeSeriesPredictorConfig encogTimeSeriesPredictorConfig) {
+    public EncogTimeSeriesPredictor(EncogTimeSeriesPredictorConfig encogTimeSeriesPredictorConfig) {
         this.conf = encogTimeSeriesPredictorConfig;
     }
 
     public List<IK8sDataElement> predict(Date begin, Date end, int count) {
         List<IK8sDataElement> dp = dataSource.getData();
-        for(IK8sDataElement it : dp) {
+        for(IK8sDataElement _it : dp) {
+            IK8sDataElementTimeseries it = (IK8sDataElementTimeseries)_it;
             it.getColumns().remove("_DATE");
             it.getColumns().put("col2", it.getColumns().get(fieldName));
         }
@@ -97,7 +99,7 @@ class EncogTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
 
         for (int i = 0; i < WINDOW_SIZE + 1; ++i) {
             int idx = (WINDOW_SIZE + 1 - i);
-            IK8sDataElement e = dp.get(idx);
+            IK8sDataElementTimeseries e = (IK8sDataElementTimeseries)dp.get(idx);
             String[] arr = new String[e.getColumns().size()];
             arr = e.getColumns().values().toArray(arr);
             helper.normalizeInputVector(arr, slice, false);
@@ -123,5 +125,9 @@ class EncogTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
 
     public void addDataSource(IK8sDataSource source) {
         this.dataSource = source;
+    }
+
+    public List<IK8sDataElement> predict(int beginIndex, int amount, int forecastCount) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

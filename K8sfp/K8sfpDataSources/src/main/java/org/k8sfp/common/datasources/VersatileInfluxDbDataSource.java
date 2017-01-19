@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.k8sfp.interfaces.IK8sDataElement;
+import org.k8sfp.interfaces.IK8sDataElementTimeseries;
 import org.k8sfp.interfaces.special.IK8sVersatileDataSource;
 
 /**
@@ -46,11 +47,13 @@ class VersatileInfluxDbDataSource extends InfluxDbDataSource implements
         this.indexMap.clear();
         this.cols.clear();
         int j=0;
-        for(Map.Entry<String, Object> it : curr.get(0).getColumns().entrySet()) {
+        IK8sDataElementTimeseries el = ((IK8sDataElementTimeseries)curr.get(0));
+        for(Map.Entry<String, Object> it : el.getColumns().entrySet()) {
             indexMap.put(it.getKey(), j++);
         }
         
-        for(IK8sDataElement it : curr) {
+        for(IK8sDataElement _it : curr) {
+            IK8sDataElementTimeseries it = (IK8sDataElementTimeseries)_it;
             String[] arr = new String[it.getColumns().size()];
             arr = it.getColumns().values().toArray(arr);
             cols.add(arr);

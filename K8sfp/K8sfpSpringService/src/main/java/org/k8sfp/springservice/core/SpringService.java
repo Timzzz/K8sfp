@@ -5,7 +5,7 @@ import org.k8sfp.common.datasources.CommonDataSourceFactory;
 import org.k8sfp.common.datasources.InfluxDbDataSource;
 import org.k8sfp.common.datasources.InfluxDbDataSourceConfig;
 import org.k8sfp.encog.EncogTimeSeriesPredictorConfig;
-import org.k8sfp.encog.TimeSeriesPredictorFactory;
+import org.k8sfp.TimeSeriesPredictorFactory;
 import org.k8sfp.interfaces.IK8sDataElement;
 import org.k8sfp.interfaces.IK8sDataSource;
 import org.k8sfp.interfaces.IK8sPredictor;
