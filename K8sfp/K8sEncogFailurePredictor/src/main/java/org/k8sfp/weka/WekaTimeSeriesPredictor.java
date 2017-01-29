@@ -88,8 +88,20 @@ public class WekaTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
     private void createWekaInstances(){
         try {
             String pathToWineData = conf.getFilePath();
-            data = new Instances(new BufferedReader(new FileReader(
+            /*data = new Instances(new BufferedReader(new FileReader(
                     pathToWineData)));
+            */
+            // load CSV
+    CSVLoader loader = new CSVLoader();
+    loader.setSource(new File(pathToWineData));
+    Instances data = loader.getDataSet();
+ 
+    // save ARFF
+    ArffSaver saver = new ArffSaver();
+    saver.setInstances(data);
+    saver.setFile(new File(pathToWineData + ".arff"));
+    saver.setDestination(new File(pathToWineData));
+    saver.writeBatch();
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(WekaTimeSeriesPredictor.class.getName()).log(Level.SEVERE, null, ex);

@@ -17,6 +17,6 @@ limit_count=$1
 container_pattern=$2
 
 bash pull.sh $limit_count $container_pattern
-python jconf.py
-
+python createCsv.py
+java -jar CsvToArffConverter.jar createCsv.csv
 

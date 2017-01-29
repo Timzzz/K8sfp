@@ -9,7 +9,7 @@
   	<module>ServiceBridge</module>
   	<module>K8sfpSpringService</module>
   	<module>K8sEncogFailurePredictor</module>
-  	<module>K8sfpInfluxDbDataSource</module>
   	<module>K8sfpDataSources</module>
+    <module>K8sfpEvaluator</module>
   </modules>
 </project>
