@@ -28,6 +28,17 @@ public class InfluxDbExtractor {
     private static String header = null;
     
     public static void main(String[] args) throws InterruptedException {
+        
+        InfluxDbDataSourceConfig config = new InfluxDbDataSourceConfig(
+                "http://10.0.6.56:30343",
+                "root", "root",
+                "k8s",
+                "cpu/usage",
+                "edge",
+                50,
+                InfluxDbDataSourceConfig.CONTAINER_QUERY,
+                InfluxDbDataSourceConfig.CPU_ALL_QUERY);
+        
         InfluxDbExtractor extractor = new InfluxDbExtractor();
         BufferedWriter writer = null;
         try {
@@ -40,7 +51,7 @@ public class InfluxDbExtractor {
             while (true) {
                 //writer = new BufferedWriter(new FileWriter(FILE_PATH, false));
                 
-                lastDate = extractor.extract(lastDate, true, writer, lineBuffer);
+                lastDate = extractor.extract(config, lastDate, true, writer, lineBuffer);
                 //writer.flush();
                 
                 while(lineBuffer.size() > 5000) {
@@ -58,18 +69,9 @@ public class InfluxDbExtractor {
         }
     }
 
-    private Date extract(Date writeFromDate, boolean writeHeader,
+    private Date extract(InfluxDbDataSourceConfig config, Date writeFromDate, boolean writeHeader,
             BufferedWriter writer, List<String> lineBuffer) throws IOException {
-        InfluxDbDataSourceConfig config = new InfluxDbDataSourceConfig(
-                "http://172.17.0.1:8086",
-                "root", "root",
-                "cadvisor",
-                "cpu_usage_total",
-                "lonely_spence",
-                50,
-                InfluxDbDataSourceConfig.CONTAINER_QUERY,
-                InfluxDbDataSourceConfig.CPU_ALL_QUERY);
-
+        
         Date lastDate = writeFromDate;
         db = new DbFetcher(config);
         List<DbEntry> data = db.GetData();
@@ -123,7 +125,6 @@ public class InfluxDbExtractor {
             writer.write(line);
         }
         writer.flush();
-        
         writer.close();
         return lastDate;
     }

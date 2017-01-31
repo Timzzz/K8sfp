@@ -23,7 +23,6 @@ public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
     //public static final String CPU_ALL_QUERY = "SELECT value, container_name, instance, machine FROM cpu_usage_per_cpu, cpu_usage_system, cpu_usage_total, cpu_usage_user, fs_limit, fs_usage, load_average, memory_usage, memory_working_set WHERE container_name !~ /\\/.*/ AND container_name !~ /.*monitoring/ ORDER BY DESC LIMIT %3$d";
     
     /**
-     * 
      * @param connectionUrl
      * @param user
      * @param password

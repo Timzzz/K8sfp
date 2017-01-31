@@ -32,13 +32,13 @@ public class KiekerLogPusher {
     private static final String[] queryArr = new String[]{
         "curl",
         "-XPOST",
-        "--proxy",
-        "timzwietasch:n2(rSR6oi@192.168.209.235:8888",
+        "",//"--proxy",
+        "",//"timzwietasch:n2(rSR6oi@192.168.209.235:8888",
         "http://%1$s/write?db=%2$s", // URL, DBNAME 
         "-d",
         "%1$s,%2$s"  // MEASUREMENTNAME, VALUES
     };
-    private static final String valueFormat = "host=%s log=\"%s\"";
+    private static final String valueFormat = "host=%s value=\"%s\"";
     
     private static String[] getQuery(String url, String dbName, String measurement, String values) {
         String[] a = queryArr.clone();
@@ -72,22 +72,26 @@ public class KiekerLogPusher {
         
         KiekerLogPusher m = new KiekerLogPusher();
         
-        String host = getArrayVal(args, 4, "testhost");
-        String pathName = getArrayVal(args, 0, "/tmp/");
-        String url = getArrayVal(args, 1, "10.0.6.56:30343");   // 172.16.22.5:8086
-        String dbName = getArrayVal(args, 2, "mydb");
-        String measurement = getArrayVal(args, 3, "kiekerlogs");
+        String host = getArrayVal(args, 0, "testhost");
+        String pathName = getArrayVal(args, 1, "/tmp/");
+        String url = getArrayVal(args, 2, "10.0.6.56:30343");   // 172.16.22.5:8086
+        String dbName = getArrayVal(args, 3, "mydb");
+        String measurement = getArrayVal(args, 4, "kiekerlogs");
         int sleepTime = 2000;
         
         if(args.length < 5) {
             System.out.println("USAGE: prgram <Hostname> <pathToFile> <URL:Port to InfluxDb> <DB Name> <Measurement Name>");
-            return;
+            for(String s : args) {
+                System.out.println("PARAM: " + s);
+            }
+            //return;
         }
         
         while(true) {
             try {
                 List<String> content = m.readFiles(pathName);
-                System.out.println("Writing " + (content == null ? "0" : content.size()));
+                if(content != null && content.size() > 0) 
+                    System.out.println("Writing " + content.size());
                 if(content != null) {
                     for(String c : content) {
                         String v = getValueStr(host, c);
@@ -95,7 +99,6 @@ public class KiekerLogPusher {
                         sendToDb(q);
                     }
                 }
-                System.out.println("done.");
                 Thread.sleep(sleepTime);
             } catch (InterruptedException ex) {
                 Logger.getLogger(KiekerLogPusher.class.getName()).log(Level.SEVERE, null, ex);
@@ -107,9 +110,11 @@ public class KiekerLogPusher {
     private List<String> readFiles(String path){
         List<String> res = null;
         File[] files = new File(path).listFiles();
+        if(files == null) return res;
         for(File f : files) {
             if(f.isDirectory() && f.getName().contains("kieker")) {
                 File[] files2 = f.listFiles();
+                if(files2 == null) continue;
                 for(File f2 : files2) {
                     if(f2.isFile()&& f2.getName().contains("kieker") && f2.getName().endsWith(".dat")) {
                         res = readFile(f2);
