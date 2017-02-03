@@ -1,0 +1,3 @@
+_DATE cpuusage host log 
+2017-02-03 15:31:42 0.0 edgeinflux-eaolf $1;1486132296524076113;protected java.lang.String com.netflix.recipes.rss.hystrix.GetRSSCommand.run();<no-session-id>;9057724013060554758;1486132296173715063;1486132296524070887;edgeinflux-eaolf;0;0 
+2017-02-03 15:31:42 0.0 edgeinflux-eaolf $1;1486132296519963567;public com.sun.jersey.api.client.ClientResponse com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(com.sun.jersey.api.client.ClientRequest);<no-session-id>;9057724013060554758;1486132296174144609;1486132296519948736;edgeinflux-eaolf;1;1 

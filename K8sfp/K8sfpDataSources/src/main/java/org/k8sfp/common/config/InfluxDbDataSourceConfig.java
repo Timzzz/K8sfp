@@ -1,7 +1,8 @@
-package org.k8sfp.common.datasources;
+package org.k8sfp.common.config;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import org.k8sfp.common.datasources.CommonDataSourceFactory;
 import org.k8sfp.interfaces.IK8sDataSourceConfig;
 
 public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
@@ -9,12 +10,9 @@ public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
     private final String connectionUrl;
     private final String user;
     private final String password;
-    private final String dbName;
-    private final String fieldRequest;
-    private final String containerName;
     private final int limit;
-    private final String requestQuery;
-    private final String containerRequestQuery;
+    private String dbName;
+    private String requestQuery;
     private DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     
     public static final String CONTAINER_QUERY = "SELECT value, container_name FROM cpu_usage_total WHERE container_name !~ /\\/.*/ GROUP BY container_name ORDER BY DESC LIMIT 1";
@@ -34,28 +32,27 @@ public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
      * @param cpuQuery 
      */
     public InfluxDbDataSourceConfig(String connectionUrl, String user, String password, String dbName,
-            String field, String container, int limit,
-            String containerQuery, String cpuQuery) {
+            int limit,
+            String cpuQuery) {
         super();
         this.connectionUrl = connectionUrl;
         this.user = user;
         this.password = password;
         this.dbName = dbName;
-        this.fieldRequest = field;
-        this.containerName = container;
         this.limit = limit;
         this.requestQuery = cpuQuery == null ? this.CPU_QUERY : cpuQuery;
-        this.containerRequestQuery = containerQuery == null ? this.CONTAINER_QUERY : containerQuery;
-        
     }
 
-    public final String getContainerQuery() {
-        return containerRequestQuery;
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public void setRequestQuery(String requestQuery) {
+        this.requestQuery = requestQuery;
     }
 
     public final String getRequestQuery() {
-        return String.format(requestQuery, getField(),
-                    getContainer(), getLmit());
+        return requestQuery;
     }
 
     public final DateFormat getUtcDateFormat() {
@@ -76,14 +73,6 @@ public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
 
     public final String getDbName() {
         return dbName;
-    }
-
-    public final String getField() {
-        return fieldRequest;
-    }
-
-    public final String getContainer() {
-        return containerName;
     }
 
     public final int getLmit() {

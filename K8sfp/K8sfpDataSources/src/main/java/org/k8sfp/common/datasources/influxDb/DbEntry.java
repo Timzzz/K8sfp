@@ -12,11 +12,12 @@ import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import org.k8sfp.interfaces.IK8sDataElement;
+import org.k8sfp.interfaces.IK8sDataElementTimeseries;
 
 /**
  *
  */
-public class DbEntry implements IK8sDataElement {
+public class DbEntry implements IK8sDataElementTimeseries {
 
     private final Date time;
     public final String DATE_KEY = "_DATE";

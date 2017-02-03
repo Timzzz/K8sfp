@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.k8sfp.common.datasources.CommonDataSourceFactory;
-import org.k8sfp.common.datasources.InfluxDbDataSourceConfig;
+import org.k8sfp.common.config.InfluxDbDataSourceConfig;
 import org.k8sfp.interfaces.IK8sDataElement;
 import org.k8sfp.interfaces.IK8sTimeSeriesDataSource;
 
@@ -33,10 +33,7 @@ public class InfluxDbExtractor {
                 "http://10.0.6.56:30343",
                 "root", "root",
                 "k8s",
-                "cpu/usage",
-                "edge",
                 50,
-                InfluxDbDataSourceConfig.CONTAINER_QUERY,
                 InfluxDbDataSourceConfig.CPU_ALL_QUERY);
         
         InfluxDbExtractor extractor = new InfluxDbExtractor();

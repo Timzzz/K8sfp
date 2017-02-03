@@ -3,7 +3,7 @@ package org.k8sfp.springservice.core;
 import java.util.List;
 import org.k8sfp.common.datasources.CommonDataSourceFactory;
 import org.k8sfp.common.datasources.InfluxDbDataSource;
-import org.k8sfp.common.datasources.InfluxDbDataSourceConfig;
+import org.k8sfp.common.config.InfluxDbDataSourceConfig;
 import org.k8sfp.encog.EncogTimeSeriesPredictorConfig;
 import org.k8sfp.TimeSeriesPredictorFactory;
 import org.k8sfp.interfaces.IK8sDataElement;
@@ -25,8 +25,7 @@ public class SpringService {
 //                InfluxDbDataSourceConfig.CPU_QUERY);
         InfluxDbDataSourceConfig config = new InfluxDbDataSourceConfig(
                 "http://10.0.6.56:32197/", "root", "root", "k8s",
-                "cpu/usage", "sleepy_goldberg", 100,
-                InfluxDbDataSourceConfig.CONTAINER_QUERY,
+                100,
                 InfluxDbDataSourceConfig.CPU_QUERY);
 
         IK8sPredictorConfig predictorConf = new EncogTimeSeriesPredictorConfig();

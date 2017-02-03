@@ -1,5 +1,6 @@
 package org.k8sfp.common.datasources;
 
+import org.k8sfp.common.config.InfluxDbDataSourceConfig;
 import org.k8sfp.interfaces.IK8sDataSource;
 import org.k8sfp.interfaces.IK8sDataSourceConfig;
 

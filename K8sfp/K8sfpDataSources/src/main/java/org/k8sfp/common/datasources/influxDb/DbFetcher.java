@@ -31,7 +31,7 @@ import org.influxdb.InfluxDB.ConsistencyLevel;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.*;
 import org.influxdb.dto.QueryResult.*;
-import org.k8sfp.common.datasources.InfluxDbDataSourceConfig;
+import org.k8sfp.common.config.InfluxDbDataSourceConfig;
 
 /**
  *
@@ -39,7 +39,7 @@ import org.k8sfp.common.datasources.InfluxDbDataSourceConfig;
 public class DbFetcher {
     //private static final String containerQuery = "SELECT value, container_name FROM cpu_usage_total WHERE container_name !~ /\\/.*/ GROUP BY container_name ORDER BY DESC LIMIT 1";
     //private static final String cpuQuery = "SELECT value / 1000000 FROM %s WHERE container_name='%s' GROUP BY * ORDER BY DESC LIMIT %d";
-    private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     static {
         utcDateFormat.setTimeZone((TimeZone.getTimeZone("UTC")));
@@ -85,8 +85,8 @@ public class DbFetcher {
         String dbName = conf.getDbName();
         //influxDB.createDatabase(dbName);
         
-        Query query = new Query("SHOW MEASUREMENTS", dbName);
-        QueryResult res = influxDB.query(query);
+        //Query query = new Query("SHOW MEASUREMENTS", dbName);
+        //QueryResult res = influxDB.query(query);
         
         /*List<String> container = new ArrayList<String>();
         getContainers(influxDB, dbName, container);
@@ -178,40 +178,23 @@ public class DbFetcher {
 
     }
 
-    /**
-     * Gets all container names available in the DB
-     *
-     * @param influxDB
-     * @param dbName
-     * @param container
-     */
-    private void getContainers(InfluxDB influxDB, String dbName, List<String> container) {
-        Query query = new Query(conf.getContainerQuery(), dbName);
-        QueryResult res = influxDB.query(query);
-        for (Result r : res.getResults()) {
-            for (Series s : r.getSeries()) {
-                for (List<Object> objList : s.getValues()) {
-                    if (objList != null && objList.size() >= 2) {
-                        container.add(objList.get(2).toString());
-                    }
-                }
-            }
-        }
-    }
-
     private static Date parseTime(String ts) throws ParseException {
-        String[] split = ts.split("[\\.Z]");
+        if(ts.contains(".")) {
+            String[] split = ts.split("\\.");
+            ts = split[0] + "Z";
+        }
+        /*String[] split = ts.split("[\\.Z]");
         if (split.length < 2) {
-            throw new ParseException("Format not valid", 0);
+        throw new ParseException("Format not valid", 0);
         }
         long val = Long.parseLong(split[split.length - 1]);
         val *= 1e-6;
         split[split.length - 1] = "" + val;
         ts = split[0];
         for (int i = 1; i < split.length; ++i) {
-            ts += "." + split[i];
+        ts += "." + split[i];
         }
-        ts += "Z";
+        ts += "Z";*/
         return utcDateFormat.parse(ts);
     }
 
