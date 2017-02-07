@@ -11,5 +11,6 @@
   	<module>K8sEncogFailurePredictor</module>
   	<module>K8sfpDataSources</module>
     <module>K8sfpEvaluator</module>
+    <module>K8sFpFaultController</module>
   </modules>
 </project>

@@ -20,10 +20,13 @@ public class K8sCommonDataElement implements IK8sDataElementTimeseries {
     private final Date time;
     private final SortedMap<String, Object> values;
 
-    public K8sCommonDataElement(Date time, String key, String value) {
+    public K8sCommonDataElement(Date time) {
         super();
         this.time = time;
         this.values = new TreeMap<String, Object>();
+    }
+    public K8sCommonDataElement(Date time, String key, String value) {
+        this(time);
         this.values.put(key, value);
     }
 

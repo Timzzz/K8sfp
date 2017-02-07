@@ -42,6 +42,10 @@ public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
         this.limit = limit;
         this.requestQuery = cpuQuery == null ? this.CPU_QUERY : cpuQuery;
     }
+    public InfluxDbDataSourceConfig(String connectionUrl, String user, String password, String dbName,
+            String cpuQuery) {
+        this(connectionUrl, user, password, dbName, 100, cpuQuery);
+    }
 
     public void setDbName(String dbName) {
         this.dbName = dbName;

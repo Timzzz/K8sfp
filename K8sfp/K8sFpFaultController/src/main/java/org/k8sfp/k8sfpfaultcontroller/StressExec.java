@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package core;
+package org.k8sfp.k8sfpfaultcontroller;
 
 /**
  *
@@ -18,7 +18,7 @@ public class StressExec implements IFaultExecution{
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "StressCmd";
     }
 
 }

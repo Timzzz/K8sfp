@@ -29,19 +29,14 @@ import org.k8sfp.interfaces.IK8sTimeSeriesDataSource;
 public class InfluxDbPull {
 
     public final String DATE_KEY = "_DATE";
-    private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
 
     public static void main(String[] args) {
 
         int limit = 100;
-        String dbName = "mydb";
-        String queryStr = "SHOW MEASUREMENTS";
-        queryStr = String.format(queryStr, limit);
 
         InfluxDbDataSourceConfig conf = new InfluxDbDataSourceConfig(
-                "http://10.0.6.56:30343", "root", "root", dbName,
-                limit,
-                queryStr);
+                "http://10.0.6.56:30343", "root", "root", null, null);
 
         IK8sTimeSeriesDataSource ds = (IK8sTimeSeriesDataSource) CommonDataSourceFactory.create(
                 CommonDataSourceFactory.DataSourceType.InfluxDbSource, conf);
@@ -51,7 +46,7 @@ public class InfluxDbPull {
         List<IK8sDataElement> data = ds.getData();
 
         conf.setDbName("k8s");
-            conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name FROM \"cpu/usage\" WHERE pod_name =~ /edgeinflux.*/  ORDER BY DESC LIMIT 1000", limit));
+            conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name FROM \"cpu/usage\" WHERE pod_name =~ /edgeinflux.*/  ORDER BY DESC LIMIT 2000", limit));
         List<IK8sDataElement> data1 = ds.getData();
 
         List<IK8sDataElement> res = new ArrayList<IK8sDataElement>();
@@ -62,6 +57,11 @@ public class InfluxDbPull {
             for (IK8sDataElement it2 : data1) {  // data must be ordered
                 IK8sDataElementTimeseries itt2 = (IK8sDataElementTimeseries) it2;
                 if (itt2.getTime().before(itt.getTime())) {
+                    /*if(itt2.getTime().getMonth() <= itt.getTime().getMonth() &&
+                    itt2.getTime().getDay()<= itt.getTime().getDay() &&
+                    itt2.getTime().getHours()<= itt.getTime().getHours() &&
+                    itt2.getTime().getMinutes()<= itt.getTime().getMinutes()&&
+                    itt2.getTime().getSeconds()<= itt.getTime().getSeconds()) {*/
                     toCombine = itt2;
                     break;
                 } else {
@@ -74,9 +74,9 @@ public class InfluxDbPull {
                         itt.getColumns().put(key, toCombine.getColumns().get(key));
                     }
                 }
-                res.add(itt);
+                
             }
-            
+            res.add(itt);
         }
         writeToCsv(res, "test.csv");
 

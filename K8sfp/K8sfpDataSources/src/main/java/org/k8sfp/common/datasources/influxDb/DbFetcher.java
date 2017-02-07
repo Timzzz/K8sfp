@@ -32,6 +32,7 @@ import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.*;
 import org.influxdb.dto.QueryResult.*;
 import org.k8sfp.common.config.InfluxDbDataSourceConfig;
+import org.k8sfp.interfaces.IK8sDataElementTimeseries;
 
 /**
  *
@@ -40,15 +41,20 @@ public class DbFetcher {
     //private static final String containerQuery = "SELECT value, container_name FROM cpu_usage_total WHERE container_name !~ /\\/.*/ GROUP BY container_name ORDER BY DESC LIMIT 1";
     //private static final String cpuQuery = "SELECT value / 1000000 FROM %s WHERE container_name='%s' GROUP BY * ORDER BY DESC LIMIT %d";
     private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
+    
     static {
         utcDateFormat.setTimeZone((TimeZone.getTimeZone("UTC")));
     }
 
     private final InfluxDbDataSourceConfig conf;
-
+    private InfluxDB influxDB;
+    
     public DbFetcher(InfluxDbDataSourceConfig conf) {
         this.conf = conf;
+    }
+    
+    public void updateConfig(boolean useProxy) {
+        influxDB = authenticate(useProxy);
     }
 
     class Auth implements Authenticator {
@@ -69,34 +75,62 @@ public class DbFetcher {
         }
     }
 
-    public List<DbEntry> GetData() {
-
+    private InfluxDB authenticate(boolean useProxy) {
+        if(useProxy) {
         Authenticator proxyAuthenticator = new Auth("timzwietasch", "n2(rSR6oi");
-        
-        Builder client = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.209.235", 8888)))
-                .proxyAuthenticator(proxyAuthenticator);
-
-        InfluxDB influxDB = InfluxDBFactory.connect(
+            Builder client = new OkHttpClient.Builder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.209.235", 8888)))
+                    .proxyAuthenticator(proxyAuthenticator);
+            InfluxDB influxDB = InfluxDBFactory.connect(
                 conf.getConnectionUrl(), conf.getDbName(), conf.getPassword(), client);
+            return influxDB;
+        } else {
+            InfluxDB influxDB = InfluxDBFactory.connect(
+                conf.getConnectionUrl(), conf.getDbName(), conf.getPassword());
+            return influxDB;
+        }
+    }
+    
+    public List<DbEntry> GetData() {
+        //InfluxDB influxDB = authenticate(true);
         String dbName = conf.getDbName();
-        //influxDB.createDatabase(dbName);
-        
-        //Query query = new Query("SHOW MEASUREMENTS", dbName);
-        //QueryResult res = influxDB.query(query);
-        
-        /*List<String> container = new ArrayList<String>();
-        getContainers(influxDB, dbName, container);
-        for (String n : container) {
-            System.out.println(n);
-        }*/
-
         Map<String, List<DbEntry>> entries = GetValues(influxDB, dbName);
         List<DbEntry> joined = joinEntries(entries, null);
         return joined;
+    }
+    
+    public boolean writeData(String measurement, List<IK8sDataElementTimeseries> data, List<String> fields) {
+        try {
+            
+            BatchPoints batchPoints = BatchPoints
+                    .database(conf.getDbName())
+                    .consistency(ConsistencyLevel.ALL)
+                    .build();
+            
+            for (IK8sDataElementTimeseries it : data) {
+                Point.Builder point = Point.measurement(measurement).time(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+                for (int i = 0; i < fields.size(); ++i) {
+                    String key = fields.get(i);
+                    if (!it.getColumns().containsKey(key)) {
+                        //point.addField(key, "");
+                    } else {
+                        Object o = it.getColumns().get(key);
+                        String str = (o == null ? "" : o).toString();
+                        point.addField(key, str);
+                    }
+                }
+                Point p = point.build();
+                batchPoints.point(p);
+            }
+            influxDB.write(batchPoints);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
