@@ -51,11 +51,12 @@ public class DbFetcher {
     
     public DbFetcher(InfluxDbDataSourceConfig conf) {
         this.conf = conf;
+        influxDB = authenticate(conf.isUseProxy());
     }
     
-    public void updateConfig(boolean useProxy) {
-        influxDB = authenticate(useProxy);
-    }
+    /*public void updateConfig(boolean useProxy) {
+    influxDB = authenticate(useProxy);
+    }*/
 
     class Auth implements Authenticator {
         private final String username;
@@ -65,8 +66,6 @@ public class DbFetcher {
             this.username = username;
             this.password = password;
         }
-        
-        @Override
         public Request authenticate(Route route, Response response) throws IOException {
             String credential = Credentials.basic(username, password);
             return response.request().newBuilder()
@@ -85,11 +84,11 @@ public class DbFetcher {
                     .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.209.235", 8888)))
                     .proxyAuthenticator(proxyAuthenticator);
             InfluxDB influxDB = InfluxDBFactory.connect(
-                conf.getConnectionUrl(), conf.getDbName(), conf.getPassword(), client);
+                conf.getConnectionUrl(), conf.getUser(), conf.getPassword(), client);
             return influxDB;
         } else {
             InfluxDB influxDB = InfluxDBFactory.connect(
-                conf.getConnectionUrl(), conf.getDbName(), conf.getPassword());
+                conf.getConnectionUrl(), conf.getUser(), conf.getPassword());
             return influxDB;
         }
     }

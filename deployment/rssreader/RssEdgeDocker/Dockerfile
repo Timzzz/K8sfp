@@ -9,8 +9,12 @@ ADD https://github.com/hora-prediction/recipes-rss-kube/releases/download/0.3/rs
 ADD KiekerLogPusher/KiekerLogPusher.jar /opt/recipes-rss/KiekerLogPusher/KiekerLogPusher.jar
 ADD KiekerLogPusher/lib/*.jar /opt/recipes-rss/KiekerLogPusher/lib
 ADD run.sh /opt/recipes-rss/run.sh
+ADD lib/byteman-download-3.0.6-bin.zip /opt/recipes-rss/lib/byteman-download-3.0.6-bin.zip
+ADD lib/*.jar /opt/recipes-rss/lib/
+ADD byteman/* /opt/recipes-rss/byteman/
 
-ADD https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/1.13-SNAPSHOT/kieker-1.13-20170125.034614-257-aspectj.jar /opt/recipes-rss/kieker-1.13-aspectj.jar
+#ADD https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/1.13-SNAPSHOT/kieker-1.13-20170125.034614-257-aspectj.jar /opt/recipes-rss/kieker-1.13-aspectj.jar
+ADD lib/kieker-1.12-aspectj.jar /opt/recipes-rss/kieker-1.13-aspectj.jar
 COPY kieker.monitoring.properties /opt/recipes-rss/kieker.monitoring.properties
 
 ADD http://central.maven.org/maven2/org/apache/activemq/activemq-all/5.12.0/activemq-all-5.12.0.jar /opt/recipes-rss/activemq-all-5.12.0.jar
@@ -19,7 +23,7 @@ ADD http://central.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.4/log4
 
 COPY aop.xml /opt/recipes-rss/META-INF/aop.xml
 RUN zip -r rss-edge.jar META-INF
-#RUN unzip rss-edge.jar
+RUN unzip lib/byteman-download-3.0.6-bin.zip
 
 EXPOSE 9090 
 CMD ["sh", "run.sh"]

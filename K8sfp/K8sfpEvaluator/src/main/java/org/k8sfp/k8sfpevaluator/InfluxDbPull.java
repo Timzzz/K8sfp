@@ -33,24 +33,45 @@ public class InfluxDbPull {
 
     public static void main(String[] args) {
 
-        int limit = 100;
+        int limit = 3000;
 
         InfluxDbDataSourceConfig conf = new InfluxDbDataSourceConfig(
-                "http://10.0.6.56:30343", "root", "root", null, null);
+                "http://10.0.6.56:30343", "root", "root", null, 100, null);
 
         IK8sTimeSeriesDataSource ds = (IK8sTimeSeriesDataSource) CommonDataSourceFactory.create(
                 CommonDataSourceFactory.DataSourceType.InfluxDbSource, conf);
 
-        conf.setDbName("mydb");
+        List<String> keyList = new ArrayList<String>();
+        keyList.add("_DATE");
+        keyList.add("host");
+        String key = "";
+
+        conf.setDbName("k8s");
+        key = "cpuusage";
+        keyList.add(key);
+        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name FROM \"cpu/usage_rate\" WHERE pod_name =~ /edgeinflux.*/  ORDER BY DESC LIMIT 2000", limit));
+        List<IK8sDataElement> data1 = ds.getData();
+
+        conf.setDbName("k8s");
+        key = "memusage";
+        keyList.add(key);
+        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /edgeinflux.*/  ORDER BY DESC LIMIT 2000", limit));
+        List<IK8sDataElement> data2 = ds.getData();
+
+        conf.setDbName("k8sfp");
+        key = "log";
+        keyList.add(key);
         conf.setRequestQuery(String.format("SELECT host, value as log FROM kiekerlogs ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data = ds.getData();
 
-        conf.setDbName("k8s");
-            conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name FROM \"cpu/usage\" WHERE pod_name =~ /edgeinflux.*/  ORDER BY DESC LIMIT 2000", limit));
-        List<IK8sDataElement> data1 = ds.getData();
+        List<IK8sDataElement> res = combineMeasurements(data, data1);
+        res = combineMeasurements(res, data2);
+        writeToCsv(res, "test.csv", keyList);
 
+    }
+
+    private static List<IK8sDataElement> combineMeasurements(List<IK8sDataElement> data, List<IK8sDataElement> data1) {
         List<IK8sDataElement> res = new ArrayList<IK8sDataElement>();
-        
         for (IK8sDataElement it : data) {
             IK8sDataElementTimeseries itt = (IK8sDataElementTimeseries) it;
             IK8sDataElementTimeseries toCombine = null;
@@ -74,41 +95,41 @@ public class InfluxDbPull {
                         itt.getColumns().put(key, toCombine.getColumns().get(key));
                     }
                 }
-                
+
             }
             res.add(itt);
         }
-        writeToCsv(res, "test.csv");
-
+        return res;
     }
 
-    private static void writeToCsv(List<IK8sDataElement> list, String path) {
+    private static void writeToCsv(List<IK8sDataElement> list, String path, List<String> keyList) {
 
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));
             IK8sDataElementTimeseries first = (IK8sDataElementTimeseries) list.get(0);
-            List<String> keyList = new ArrayList<String>();
             /*for (String s : first.getColumns().keySet()) {  // create order
             keyList.add(s);
             }*/
-            keyList.add("_DATE");
+ /*keyList.add("_DATE");
             keyList.add("cpuusage");
             keyList.add("host");
             keyList.add("log");
-            
+             */
             for (String key : keyList) {
                 writer.print(key + " ");
             }
             writer.println();
-            
+
             for (int i = 0; i < list.size(); ++i) {
                 IK8sDataElementTimeseries it = (IK8sDataElementTimeseries) list.get(i);
                 List<String> values = new ArrayList<String>();
                 for (String key : keyList) {
                     Object s = "null";
-                    if(it.getColumns().containsKey(key)) s = it.getColumns().get(key);
-                    if(s instanceof Date) {
+                    if (it.getColumns().containsKey(key)) {
+                        s = it.getColumns().get(key);
+                    }
+                    if (s instanceof Date) {
                         s = utcDateFormat.format(s);
                     }
                     writer.print(s + " ");

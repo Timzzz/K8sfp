@@ -1,3 +1,3 @@
-sudo docker build -t timz/spring .
-sudo docker run -it timz/spring
-
+sudo docker build -t timz/rssedge . && \
+sudo docker run -it timz/rssedge
+#sudo docker push timz/rssedge

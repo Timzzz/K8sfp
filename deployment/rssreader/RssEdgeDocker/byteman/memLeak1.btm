@@ -1,0 +1,23 @@
+RULE trace main entry
+CLASS  com.netflix.recipes.rss.server.EdgeServer
+METHOD main
+AT ENTRY
+IF true
+DO traceln("BYTEMAN Hooked.")
+ENDRULE
+
+RULE clientMethod
+CLASS  com.netflix.recipes.rss.hystrix.GetRSSCommand
+METHOD run
+AT ENTRY
+IF true
+DO org.bytemanfi.common.CommonFiUtils.allocateMemory()
+ENDRULE
+
+RULE trace main exit
+CLASS Nameserver
+METHOD main
+AT EXIT
+IF true
+DO traceln("exiting main")
+ENDRULE

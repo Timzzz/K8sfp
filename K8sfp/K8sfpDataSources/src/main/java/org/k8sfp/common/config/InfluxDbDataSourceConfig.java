@@ -11,6 +11,7 @@ public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
     private final String user;
     private final String password;
     private final int limit;
+    private final boolean useProxy;
     private String dbName;
     private String requestQuery;
     private DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -41,11 +42,12 @@ public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
         this.dbName = dbName;
         this.limit = limit;
         this.requestQuery = cpuQuery == null ? this.CPU_QUERY : cpuQuery;
+        this.useProxy = true;
     }
-    public InfluxDbDataSourceConfig(String connectionUrl, String user, String password, String dbName,
-            String cpuQuery) {
-        this(connectionUrl, user, password, dbName, 100, cpuQuery);
-    }
+    /*public InfluxDbDataSourceConfig(String connectionUrl, String user, String password, String dbName,
+    String cpuQuery,boolean useProxy) {
+    this(connectionUrl, user, password, dbName, 100, cpuQuery, useProxy);
+    }*/
 
     public void setDbName(String dbName) {
         this.dbName = dbName;
@@ -83,4 +85,8 @@ public class InfluxDbDataSourceConfig implements IK8sDataSourceConfig {
         return limit;
     }
 
+    public boolean isUseProxy() {
+        return useProxy;
+    }
+    
 }

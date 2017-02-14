@@ -27,32 +27,41 @@ public class FaultController {
         }
     }
     
+    //public static final String BYTEMAN_PATH = "/home/tim/packages/byteman-download-3.0.6";
+    public static final String BYTEMAN_PATH = "byteman-download-3.0.6";
+    
     private static List<ExecItem> execs = new ArrayList<ExecItem>();
     private static List<String> fields = new ArrayList<String>();
     static {
-        execs.add(new ExecItem(new StressExec(), 60));
+        //execs.add(new ExecItem(new StressExec(), 60));
+        execs.add(new ExecItem(new BytemanMemInjectExec(), -1));
         fields.add("pod_name");
         fields.add("failure");
         fields.add("started");
     }
     
-    private DbFetcher influxDB;
+    private static DbFetcher influxDB;
     private static String hostname = null;
-    private static String urlPort = null;
-    private static String tableName = null;
+    private static String influxUrlPort = null;
+    private static String influxTableName = null;
     private static final String MEASURE_NAME = "fpi";
     
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         if(args.length < 3) {
-            System.out.println("USAGE: Program <HOSTNAME> <URL:PORT to DB> <TABLE_NAME>");
-            //return;
+            System.out.println("USAGE: Program <HOSTNAME> <URL:PORT to DB> <TABLE_NAME> <WAIT_TIME>"
+                    + "\nByteman folder must be present in working dir.");
+            return;
         }
         hostname = getArrayVal(args, 0, "testhost");
-        urlPort = getArrayVal(args, 1, "10.0.6.56:30343");
-        tableName = getArrayVal(args, 2, "k8sfp");
+        influxUrlPort = getArrayVal(args, 1, "10.0.6.56:30343");
+        influxTableName = getArrayVal(args, 2, "k8sfp");
+        String waitTime = getArrayVal(args, 3, "1000");
+        
+        int wTime = Integer.parseInt(waitTime);
+        Thread.sleep(wTime);
         
         new FaultController()._main();
         
@@ -71,27 +80,28 @@ public class FaultController {
     private void execRandomly(){
         int rInd = (int)((Math.random())*(execs.size()-1)+.25);
         ExecItem eItem = execs.get(rInd);
-        sendStartToDb(eItem.fe);
+        //FaultController.sendStartToDb(eItem.fe.getName());
         eItem.fe.execute(eItem.maxRuntime);
-        sendStopToDb(eItem.fe);
     }
     
     private void connectToInflux() {
-        
         InfluxDbDataSourceConfig conf = new InfluxDbDataSourceConfig(
-            "http://" + urlPort, "root", "root", tableName, null);
-        this.influxDB = new DbFetcher(conf);
-        this.influxDB.updateConfig(true);
-        
+            "http://" + influxUrlPort, "root", "root", influxTableName, 100, "");
+        try {
+            FaultController.influxDB = new DbFetcher(conf);
+        } catch (Exception ex) {
+            System.out.println("Caught Failure:");
+            ex.printStackTrace();
+        }
     }
     
-    private void sendStartToDb(IFaultExecution exec) {
-        sendToDb(exec.getName(), true);
+    public static void sendStartToDb(String execName) {
+        sendToDb(execName, true);
     }
-    private void sendStopToDb(IFaultExecution exec) {
-        sendToDb(exec.getName(), false);
+    public static void sendStopToDb(String execName) {
+        sendToDb(execName, false);
     }
-    private void sendToDb(String name, boolean started) {
+    private static void sendToDb(String name, boolean started) {
         K8sCommonDataElement e = new K8sCommonDataElement(new Date());
         e.getColumns().put("pod_name", hostname);
         e.getColumns().put("failure", name);
@@ -100,7 +110,12 @@ public class FaultController {
         List<IK8sDataElementTimeseries> data = new ArrayList<IK8sDataElementTimeseries>();
         data.add(e);
         
-        influxDB.writeData(MEASURE_NAME, data, fields);
+        try {
+            influxDB.writeData(MEASURE_NAME, data, fields);
+        } catch (Exception ex) {
+            System.out.println("Caught Failure:");
+            ex.printStackTrace();
+        }
     }
     
 }
