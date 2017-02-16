@@ -10,16 +10,6 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>weka.lib</groupId>
-            <artifactId>weka.lib</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>weka.timeseries</groupId>
-            <artifactId>weka.timeseries</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>K8sfpDataSources</artifactId>
             <version>${project.version}</version>

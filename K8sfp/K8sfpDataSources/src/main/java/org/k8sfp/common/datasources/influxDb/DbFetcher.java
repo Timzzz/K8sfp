@@ -41,19 +41,19 @@ public class DbFetcher {
     //private static final String containerQuery = "SELECT value, container_name FROM cpu_usage_total WHERE container_name !~ /\\/.*/ GROUP BY container_name ORDER BY DESC LIMIT 1";
     //private static final String cpuQuery = "SELECT value / 1000000 FROM %s WHERE container_name='%s' GROUP BY * ORDER BY DESC LIMIT %d";
     private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    
+
     static {
         utcDateFormat.setTimeZone((TimeZone.getTimeZone("UTC")));
     }
 
     private final InfluxDbDataSourceConfig conf;
     private InfluxDB influxDB;
-    
+
     public DbFetcher(InfluxDbDataSourceConfig conf) {
         this.conf = conf;
         influxDB = authenticate(conf.isUseProxy());
     }
-    
+
     /*public void updateConfig(boolean useProxy) {
     influxDB = authenticate(useProxy);
     }*/
@@ -61,7 +61,7 @@ public class DbFetcher {
     class Auth implements Authenticator {
         private final String username;
         private final String password;
-        
+
         public Auth(String username, String password) {
             this.username = username;
             this.password = password;
@@ -92,7 +92,7 @@ public class DbFetcher {
             return influxDB;
         }
     }
-    
+
     public List<DbEntry> GetData() {
         //InfluxDB influxDB = authenticate(true);
         String dbName = conf.getDbName();
@@ -100,15 +100,15 @@ public class DbFetcher {
         List<DbEntry> joined = joinEntries(entries, null);
         return joined;
     }
-    
+
     public boolean writeData(String measurement, List<IK8sDataElementTimeseries> data, List<String> fields) {
         try {
-            
+
             BatchPoints batchPoints = BatchPoints
                     .database(conf.getDbName())
                     .consistency(ConsistencyLevel.ALL)
                     .build();
-            
+
             for (IK8sDataElementTimeseries it : data) {
                 Point.Builder point = Point.measurement(measurement).time(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
                 for (int i = 0; i < fields.size(); ++i) {

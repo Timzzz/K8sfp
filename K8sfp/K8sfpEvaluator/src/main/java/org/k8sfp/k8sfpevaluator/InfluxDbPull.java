@@ -33,10 +33,10 @@ public class InfluxDbPull {
 
     public static void main(String[] args) {
 
-        int limit = 3000;
+        int limit = 15000;
 
         InfluxDbDataSourceConfig conf = new InfluxDbDataSourceConfig(
-                "http://10.0.6.56:30343", "root", "root", null, 100, null);
+                "http://10.0.11.63:32601", "root", "root", null, 100, null);
 
         IK8sTimeSeriesDataSource ds = (IK8sTimeSeriesDataSource) CommonDataSourceFactory.create(
                 CommonDataSourceFactory.DataSourceType.InfluxDbSource, conf);
@@ -49,13 +49,13 @@ public class InfluxDbPull {
         conf.setDbName("k8s");
         key = "cpuusage";
         keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name FROM \"cpu/usage_rate\" WHERE pod_name =~ /edgeinflux.*/  ORDER BY DESC LIMIT 2000", limit));
+        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name FROM \"cpu/usage_rate\" WHERE pod_name =~ /edge.*/  ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data1 = ds.getData();
 
         conf.setDbName("k8s");
         key = "memusage";
         keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /edgeinflux.*/  ORDER BY DESC LIMIT 2000", limit));
+        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /edge.*/  ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data2 = ds.getData();
 
         conf.setDbName("k8sfp");
@@ -66,7 +66,9 @@ public class InfluxDbPull {
 
         List<IK8sDataElement> res = combineMeasurements(data, data1);
         res = combineMeasurements(res, data2);
-        writeToCsv(res, "test.csv", keyList);
+        writeToCsv(res, "eventlog.csv", keyList);
+
+        System.out.println("Done.");
 
     }
 
@@ -108,14 +110,6 @@ public class InfluxDbPull {
         try {
             writer = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));
             IK8sDataElementTimeseries first = (IK8sDataElementTimeseries) list.get(0);
-            /*for (String s : first.getColumns().keySet()) {  // create order
-            keyList.add(s);
-            }*/
- /*keyList.add("_DATE");
-            keyList.add("cpuusage");
-            keyList.add("host");
-            keyList.add("log");
-             */
             for (String key : keyList) {
                 writer.print(key + " ");
             }
