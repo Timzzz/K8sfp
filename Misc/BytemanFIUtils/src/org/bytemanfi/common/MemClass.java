@@ -23,7 +23,7 @@ class MemClass {
     }
     private static String clStr() {
         StringBuilder s = new StringBuilder();
-        for(int i=0; i<10000; ++i) {
+        for(int i=0; i<1000; ++i) {
             s.append(""+(Math.random()*255));
         }
         return s.toString().intern();
