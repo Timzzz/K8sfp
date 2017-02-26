@@ -31,7 +31,7 @@ public class CsvToArffConverter {
     public static void main(String[] args) {
         try {
 
-            String filePath = "/home/zwietatm/repos/K8sfp/scripts/eventlog_crash_memleak_steady.csv";
+            String filePath = "/home/tim/repos/K8sfp/scripts/eventlog_crash_memleak_steady.csv";
             File f = new File(filePath);
             BufferedReader rd = new BufferedReader(new FileReader(filePath));
             PrintWriter wr = new PrintWriter(new BufferedWriter(new FileWriter(filePath + ".arff")));
@@ -55,8 +55,16 @@ public class CsvToArffConverter {
 
             String line = null;
             while((line = rd.readLine()) != null) {
-            	line = line.replace(',', '#');
-            	line = line.replace(' ', ',');
+                
+                String[] splitl = line.split("[, \t]");
+                line = "";
+                for(int i=0; i<splitl.length; ++i) {
+                    if(i<split.length-1 || i==splitl.length-1) {
+                        line += splitl[i] + ',';
+                    } else {
+                        line += splitl[i] + '#';
+                    }
+                }
                 wr.println(line);
             }
 
@@ -81,6 +89,10 @@ public class CsvToArffConverter {
         } catch (IOException ex) {
             Logger.getLogger(CsvToArffConverter.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private static void filterDateDist() {
+        
     }
 
 }
