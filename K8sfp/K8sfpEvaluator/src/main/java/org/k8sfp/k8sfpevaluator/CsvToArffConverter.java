@@ -12,7 +12,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,11 +30,12 @@ import weka.core.converters.CSVLoader;
 public class CsvToArffConverter {
 
     private static String timeFormat = "yyyy-MM-dd-HH:mm:ss";
-
+    private static SimpleDateFormat dFormat = new SimpleDateFormat(timeFormat);
+    
     public static void main(String[] args) {
         try {
 
-            String filePath = "/home/zwietatm/repos/K8sfp/scripts/eventlog.csv";
+            String filePath = "/home/tim/repos/K8sfp/scripts/eventlog.csv";
             File f = new File(filePath);
             BufferedReader rd = new BufferedReader(new FileReader(filePath));
             PrintWriter wr = new PrintWriter(new BufferedWriter(new FileWriter(filePath + ".arff")));
@@ -54,9 +58,16 @@ public class CsvToArffConverter {
             wr.println("");
 
             String line = null;
+            Date lastD = null;
             while((line = rd.readLine()) != null) {
 
-                String[] splitl = line.split("[,\t]");
+                String[] splitl = line.split("[, \t]");
+                Date d = dFormat.parse(splitl[0]);
+                if(lastD == null) { lastD = d; }
+                else {
+                    if(!d.after(lastD)) continue;
+                }
+                
                 line = "";
                 for(int i=0; i<splitl.length; ++i) {
                     if(i<split.length-1 || i==splitl.length-1) {
@@ -87,6 +98,8 @@ public class CsvToArffConverter {
             saver.writeBatch();*/
 
         } catch (IOException ex) {
+            Logger.getLogger(CsvToArffConverter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(CsvToArffConverter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
