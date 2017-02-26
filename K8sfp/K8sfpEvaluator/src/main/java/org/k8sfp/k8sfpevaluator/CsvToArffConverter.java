@@ -25,23 +25,23 @@ import weka.core.converters.CSVLoader;
  *
  */
 public class CsvToArffConverter {
-    
-    private static String timeFormat = "yyyy-MM-dd HH:mm:ss";
-    
+
+    private static String timeFormat = "yyyy-MM-dd-HH:mm:ss";
+
     public static void main(String[] args) {
         try {
-            
-            String filePath = args[0]; //"/home/tim/repos/K8sfp/scripts/fix_hists.csv";
+
+            String filePath = "/home/zwietatm/repos/K8sfp/scripts/eventlog_crash_memleak_steady.csv";
             File f = new File(filePath);
             BufferedReader rd = new BufferedReader(new FileReader(filePath));
             PrintWriter wr = new PrintWriter(new BufferedWriter(new FileWriter(filePath + ".arff")));
-            
+
             wr.println("@relation " + f.getName());
-            
+
             String header = rd.readLine();
-            String[] split = header.split(",");
+            String[] split = header.split("[, \t]");
             for(String s : split) {
-                if(s.equals("time")) {
+                if(s.equals("time") || s.equals("_DATE")) {
                     wr.println("@attribute " + s + " date \"" + timeFormat + "\"");
                 } else if(s.equals("container_name")) {
                     wr.println("@attribute " + s + " string");
@@ -52,30 +52,32 @@ public class CsvToArffConverter {
             wr.println("");
             wr.println("@data");
             wr.println("");
-            
+
             String line = null;
             while((line = rd.readLine()) != null) {
+            	line = line.replace(',', '#');
+            	line = line.replace(' ', ',');
                 wr.println(line);
             }
-            
+
             wr.close();
             rd.close();
-            
+
             /*CSVLoader loader = new CSVLoader();
             //loader.setDateAttributes("0");
             loader.setDateFormat("yyyy-MM-dd HH:mm:ss");
             loader.setSource(new File(pathToWineData));
             Instances data = loader.getDataSet();
-            
+
             //data.replaceAttributeAt(
             //        new Attribute("dateTime","yyyy-MM-dd HH:mm:ss"), 0);
-            
+
             // save ARFF
             ArffSaver saver = new ArffSaver();
             saver.setInstances(data);
             saver.setFile(new File(pathToWineData + ".arff"));
             saver.writeBatch();*/
-            
+
         } catch (IOException ex) {
             Logger.getLogger(CsvToArffConverter.class.getName()).log(Level.SEVERE, null, ex);
         }
