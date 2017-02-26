@@ -17,7 +17,7 @@
   		<artifactId>ServiceBridge</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>weka.lib</groupId>
       <artifactId>weka.lib</artifactId>
       <version>1.0</version>
@@ -26,6 +26,6 @@
       <groupId>weka.timeseries</groupId>
       <artifactId>weka.timeseries</artifactId>
       <version>1.0</version>
-    </dependency>
+    </dependency>-->
   </dependencies>
 </project>
