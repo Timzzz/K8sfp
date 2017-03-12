@@ -1,0 +1,6 @@
+* with run-locut.py
+* 2 Feeds, ABC & BBC News
+* cpulimit: 1000
+* no stress tool used, no memleak
+* edge: teerats version
+* did not reach limit

@@ -20,6 +20,7 @@ spec:
         - /heapster
         - --source=kubernetes:https://kubernetes.default
         - --sink=influxdb:http://influxdb-mon:8086
+        - --metric_resolution=60s
         ports:
         - containerPort: 8082
         - containerPort: 80

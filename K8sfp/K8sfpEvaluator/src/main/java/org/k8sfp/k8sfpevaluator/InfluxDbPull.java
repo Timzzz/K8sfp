@@ -33,38 +33,42 @@ public class InfluxDbPull {
 
     public static void main(String[] args) {
 
-        int limit = 15000;
+        int limit = 100000;
 
         InfluxDbDataSourceConfig conf = new InfluxDbDataSourceConfig(
-                "http://10.0.11.63:32601", "root", "root", null, 100, null);
-
+                "http://10.0.11.61:32601", "root", "root", null, 100, null);
         IK8sTimeSeriesDataSource ds = (IK8sTimeSeriesDataSource) CommonDataSourceFactory.create(
                 CommonDataSourceFactory.DataSourceType.InfluxDbSource, conf);
 
         List<String> keyList = new ArrayList<String>();
         keyList.add("_DATE");
         keyList.add("host");
-        String key = "";
+        String key;
 
         conf.setDbName("k8s");
         key = "cpuusage";
         keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name FROM \"cpu/usage_rate\" WHERE pod_name =~ /edge.*/  ORDER BY DESC LIMIT %s", limit));
+        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name as host FROM \"cpu/usage_rate\" WHERE pod_name =~ /server.*/  ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data1 = ds.getData();
 
         conf.setDbName("k8s");
         key = "memusage";
         keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /edge.*/  ORDER BY DESC LIMIT %s", limit));
+        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /server.*/  ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data2 = ds.getData();
 
-        conf.setDbName("k8sfp");
-        key = "log";
-        keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT host, value as log FROM kiekerlogs ORDER BY DESC LIMIT %s", limit));
-        List<IK8sDataElement> data = ds.getData();
+        conf = new InfluxDbDataSourceConfig(
+                "http://10.0.11.61:31070", "root", "root", null, 100, null);
+        conf.setDbName("kieker");
+        ds = (IK8sTimeSeriesDataSource) CommonDataSourceFactory.create(
+                CommonDataSourceFactory.DataSourceType.InfluxDbSource, conf);
+        
+        //key = "log";
+        //keyList.add(key);
+        //conf.setRequestQuery(String.format("SELECT hostname as host, operation_signature as log FROM operation_execution WHERE hostname =~ /.*edge.*/ ORDER BY DESC LIMIT 0"));
+        //List<IK8sDataElement> data = ds.getData();
 
-        List<IK8sDataElement> res = combineMeasurements(data, data1);
+        List<IK8sDataElement> res = data1; //combineMeasurements(data, data1);
         res = combineMeasurements(res, data2);
         writeToCsv(res, "eventlog.csv", keyList);
 
