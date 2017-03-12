@@ -48,15 +48,21 @@ public class InfluxDbPull {
         conf.setDbName("k8s");
         key = "cpuusage";
         keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name as host FROM \"cpu/usage_rate\" WHERE pod_name =~ /server.*/  ORDER BY DESC LIMIT %s", limit));
+        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name as host FROM \"cpu/usage_rate\" WHERE pod_name =~ /edge-sjsht.*/  ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data1 = ds.getData();
 
         conf.setDbName("k8s");
         key = "memusage";
         keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /server.*/  ORDER BY DESC LIMIT %s", limit));
+        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /edge-sjsht.*/  ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data2 = ds.getData();
-
+        
+        conf.setDbName("k8s");
+        key = "nodecpu";
+        keyList.add(key);
+        conf.setRequestQuery(String.format("SELECT value as nodecpu FROM \"cpu/node_utilization\" WHERE nodename =~ /.*61/ ORDER BY DESC LIMIT %s", limit));
+        List<IK8sDataElement> datanodecpu = ds.getData();
+        
         conf = new InfluxDbDataSourceConfig(
                 "http://10.0.11.61:31070", "root", "root", null, 100, null);
         conf.setDbName("kieker");
@@ -67,9 +73,18 @@ public class InfluxDbPull {
         //keyList.add(key);
         //conf.setRequestQuery(String.format("SELECT hostname as host, operation_signature as log FROM operation_execution WHERE hostname =~ /.*edge.*/ ORDER BY DESC LIMIT 0"));
         //List<IK8sDataElement> data = ds.getData();
+        
+        conf.setDbName("locust");
+        key = "locustusers";
+        keyList.add(key);
+        conf.setRequestQuery(String.format("SELECT user_count as locustusers FROM user_count ORDER BY DESC LIMIT %s", limit));
+        List<IK8sDataElement> datalocustUsers = ds.getData();
 
+        
         List<IK8sDataElement> res = data1; //combineMeasurements(data, data1);
         res = combineMeasurements(res, data2);
+        res = combineMeasurements(res, datanodecpu);
+        res = combineMeasurements(res, datalocustUsers);
         writeToCsv(res, "eventlog.csv", keyList);
 
         System.out.println("Done.");
@@ -115,7 +130,7 @@ public class InfluxDbPull {
             writer = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));
             IK8sDataElementTimeseries first = (IK8sDataElementTimeseries) list.get(0);
             for (String key : keyList) {
-                writer.print(key + " ");
+                writer.print(key + "\t");
             }
             writer.println();
 
