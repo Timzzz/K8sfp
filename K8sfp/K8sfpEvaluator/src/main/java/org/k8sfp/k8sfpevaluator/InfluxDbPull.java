@@ -48,13 +48,13 @@ public class InfluxDbPull {
         conf.setDbName("k8s");
         key = "cpuusage";
         keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name as host FROM \"cpu/usage_rate\" WHERE pod_name =~ /edge-sjsht.*/  ORDER BY DESC LIMIT %s", limit));
+        conf.setRequestQuery(String.format("SELECT value as cpuusage, pod_name as host FROM \"cpu/usage_rate\" WHERE pod_name =~ /edge-8vsjk.*/  ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data1 = ds.getData();
 
         conf.setDbName("k8s");
         key = "memusage";
         keyList.add(key);
-        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /edge-sjsht.*/  ORDER BY DESC LIMIT %s", limit));
+        conf.setRequestQuery(String.format("SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /edge-8vsjk.*/  ORDER BY DESC LIMIT %s", limit));
         List<IK8sDataElement> data2 = ds.getData();
         
         conf.setDbName("k8s");
@@ -145,7 +145,7 @@ public class InfluxDbPull {
                     if (s instanceof Date) {
                         s = utcDateFormat.format(s);
                     }
-                    writer.print(s + " ");
+                    writer.print(s + "\t");
                 }
                 writer.println();
             }

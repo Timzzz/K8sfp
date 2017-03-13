@@ -11,7 +11,7 @@ forecastPoints = 5
 
 predict <- function (x, doHoltWinters){
 	#Set window size and slide
-	win.size <- 30
+	win.size <- 15
 	slide <- 1
 
 	#Set up the table of results
