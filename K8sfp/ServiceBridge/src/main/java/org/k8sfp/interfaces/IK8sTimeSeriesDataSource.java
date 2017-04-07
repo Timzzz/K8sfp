@@ -8,4 +8,6 @@ import java.util.List;
  */
 public interface IK8sTimeSeriesDataSource extends IK8sDataSource {
 	public List<IK8sDataElement> getData(Date beginDate, Date endDate);
+	
+	public IK8sDataSourceConfig getConfiguration();
 }

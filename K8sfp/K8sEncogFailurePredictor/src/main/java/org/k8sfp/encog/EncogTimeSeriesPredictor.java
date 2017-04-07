@@ -31,9 +31,9 @@ public class EncogTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
     private IK8sDataSource dataSource;
     private final EncogTimeSeriesPredictorConfig conf;
     private static final int WINDOW_SIZE = 30;
-    
+
     private String fieldName = "cpu_usage_total";
-    
+
     public EncogTimeSeriesPredictor(EncogTimeSeriesPredictorConfig encogTimeSeriesPredictorConfig) {
         this.conf = encogTimeSeriesPredictorConfig;
     }
@@ -46,7 +46,7 @@ public class EncogTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
             it.getColumns().put("col2", it.getColumns().get(fieldName));
         }
         ((IK8sVersatileDataSource)dataSource).setCurrentData(dp);   // omit date field, ensure 2 columns are present
-        
+
         List<IK8sDataElement> res = new ArrayList<IK8sDataElement>();
         VersatileDataSource source = (VersatileDataSource) dataSource;
         VersatileMLDataSet data = new VersatileMLDataSet(source);
@@ -114,7 +114,7 @@ public class EncogTimeSeriesPredictor implements IK8sTimeSeriesPredictor {
             window.copyWindow(input.getData(), 0);
             MLData output = bestMethod.compute(input);
             String predicted0 = helper.denormalizeOutputVectorToString(output)[0];
-            
+
             System.out.println("predicted: " + predicted0);
             window.add(output.getData());
             IK8sDataElement element = new K8sCommonDataElement(null, fieldName, predicted0);

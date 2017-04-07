@@ -22,5 +22,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/home/zwietatm/repos/K8sfp/K8sfp/libs/weka.jar"/>
+	<classpathentry kind="lib" path="/home/zwietatm/repos/K8sfp/K8sfp/libs/timeseriesForecasting1.0.24.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -6,6 +6,14 @@
         <artifactId>K8sFp</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+    <repositories>
+    	<repository>
+		    <id>lib</id>
+		    <name>lib</name>
+		    <url>file:///home/zwietatm/repos/K8sfp/K8sfp/libs/</url>
+		</repository>
+    </repositories>
+
     <artifactId>K8sfpEvaluator</artifactId>
     <packaging>jar</packaging>
     <dependencies>
@@ -15,15 +23,10 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>weka.lib</groupId>
-            <artifactId>weka.lib</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>weka.timeseries</groupId>
-            <artifactId>weka.timeseries</artifactId>
-            <version>1.0</version>
-        </dependency>
+		    <groupId>com.google.code.gson</groupId>
+		    <artifactId>gson</artifactId>
+		    <version>2.2.4</version>
+		</dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

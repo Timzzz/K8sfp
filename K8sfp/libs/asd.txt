@@ -1,0 +1,25 @@
+<org.k8sfp.k8sfpevaluator.InfluxDbPullConfig>
+  <useProxy>false</useProxy>
+  <conf>
+    <org.k8sfp.k8sfpevaluator.InfluxDbPullConfig_-InfluxDbDataSourceConfigItem>
+      <config>
+        <connectionUrl>http://10.0.11.61:32601</connectionUrl>
+        <user>root</user>
+        <password>root</password>
+        <limit>100</limit>
+        <useProxy>false</useProxy>
+        <requestQuery>SELECT value / 1000000 FROM %1$s WHERE container_name=&apos;%2$s&apos; AND container_name !~ /.*monitoring/ GROUP BY * ORDER BY DESC LIMIT %3$d</requestQuery>
+      </config>
+      <dbConfigKey>default</dbConfigKey>
+    </org.k8sfp.k8sfpevaluator.InfluxDbPullConfig_-InfluxDbDataSourceConfigItem>
+  </conf>
+  <queries>
+    <org.k8sfp.k8sfpevaluator.InfluxDbPullConfig_-InfluxDbPullConfigItem>
+      <query>SHOW MEASUREMENTS</query>
+      <dbName>k8s</dbName>
+    </org.k8sfp.k8sfpevaluator.InfluxDbPullConfig_-InfluxDbPullConfigItem>
+  </queries>
+  <keyList>
+    <string>FieldName</string>
+  </keyList>
+</org.k8sfp.k8sfpevaluator.InfluxDbPullConfig>

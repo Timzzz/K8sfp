@@ -23,10 +23,12 @@ public class SpringService {
 //                "cpu_usage_total", "sleepy_goldberg", 100,
 //                InfluxDbDataSourceConfig.CONTAINER_QUERY,
 //                InfluxDbDataSourceConfig.CPU_QUERY);
+        boolean useProxy = false;
         InfluxDbDataSourceConfig config = new InfluxDbDataSourceConfig(
                 "http://10.0.6.56:32197/", "root", "root", "k8s",
                 100,
-                InfluxDbDataSourceConfig.CPU_QUERY);
+                InfluxDbDataSourceConfig.CPU_QUERY,
+                useProxy);
 
         IK8sPredictorConfig predictorConf = new EncogTimeSeriesPredictorConfig();
 

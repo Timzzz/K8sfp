@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+
+import javax.naming.directory.InvalidAttributeValueException;
+
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -96,6 +99,7 @@ public class DbFetcher {
     public List<DbEntry> GetData() {
         //InfluxDB influxDB = authenticate(true);
         String dbName = conf.getDbName();
+        System.out.println(String.format("DB: %s, Query: %s", conf.getDbName(), conf.getRequestQuery()));
         Map<String, List<DbEntry>> entries = GetValues(influxDB, dbName);
         List<DbEntry> joined = joinEntries(entries, null);
         return joined;
@@ -139,6 +143,7 @@ public class DbFetcher {
      * @param measurement
      */
     private static List<DbEntry> joinEntries(Map<String, List<DbEntry>> entries, String measurement) {
+    	if(entries == null) return null;
         List<DbEntry> jEntries = measurement == null ? null : entries.get(measurement);
         for (String key : entries.keySet()) {
             if (jEntries == null) {
@@ -166,10 +171,6 @@ public class DbFetcher {
         return jEntries;
     }
 
-    private String getCpuQuery() {
-        return conf.getRequestQuery();
-    }
-
     /**
      * Gets all values from the DB Returns Map [MeasureName] -> [DbEntry]
      *
@@ -179,7 +180,7 @@ public class DbFetcher {
      * @throws ParseException
      */
     private Map<String, List<DbEntry>> GetValues(InfluxDB influxDB, String dbName) {
-        Query query = new Query(getCpuQuery(), dbName);
+        Query query = new Query(conf.getRequestQuery(), dbName);
         QueryResult res = influxDB.query(query);
         Map<String, List<DbEntry>> entries = new HashMap<String, List<DbEntry>>();
         try {

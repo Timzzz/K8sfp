@@ -17,7 +17,7 @@ import org.k8sfp.interfaces.IK8sDataElement;
 import org.k8sfp.interfaces.IK8sDataElementTimeseries;
 
 public class FaultController {
-    
+
     private static class ExecItem{
         public IFaultExecution fe;
         public int maxRuntime;
@@ -26,10 +26,10 @@ public class FaultController {
             this.maxRuntime = maxRuntime;
         }
     }
-    
+
     //public static final String BYTEMAN_PATH = "/home/tim/packages/byteman-download-3.0.6";
     public static final String BYTEMAN_PATH = "byteman-download-3.0.6";
-    
+
     private static List<ExecItem> execs = new ArrayList<ExecItem>();
     private static List<String> fields = new ArrayList<String>();
     static {
@@ -39,13 +39,13 @@ public class FaultController {
         fields.add("failure");
         fields.add("started");
     }
-    
+
     private static DbFetcher influxDB;
     private static String hostname = null;
     private static String influxUrlPort = null;
     private static String influxTableName = null;
     private static final String MEASURE_NAME = "fpi";
-    
+
     /**
      * @param args the command line arguments
      */
@@ -59,34 +59,35 @@ public class FaultController {
         influxUrlPort = getArrayVal(args, 1, "10.0.6.56:30343");
         influxTableName = getArrayVal(args, 2, "k8sfp");
         String waitTime = getArrayVal(args, 3, "1000");
-        
+
         int wTime = Integer.parseInt(waitTime);
         Thread.sleep(wTime);
-        
+
         new FaultController()._main();
-        
+
     }
-    
+
     private static String getArrayVal(String[] array, int pos, String valIfNull) {
         if(array.length <= pos) return valIfNull;
         return array[pos];
     }
-    
+
     private void _main() {
         connectToInflux();
         execRandomly();
     }
-    
+
     private void execRandomly(){
         int rInd = (int)((Math.random())*(execs.size()-1)+.25);
         ExecItem eItem = execs.get(rInd);
         //FaultController.sendStartToDb(eItem.fe.getName());
         eItem.fe.execute(eItem.maxRuntime);
     }
-    
+
     private void connectToInflux() {
+    	boolean useProxy = false;
         InfluxDbDataSourceConfig conf = new InfluxDbDataSourceConfig(
-            "http://" + influxUrlPort, "root", "root", influxTableName, 100, "");
+            "http://" + influxUrlPort, "root", "root", influxTableName, 100, "", useProxy);
         try {
             FaultController.influxDB = new DbFetcher(conf);
         } catch (Exception ex) {
@@ -94,7 +95,7 @@ public class FaultController {
             ex.printStackTrace();
         }
     }
-    
+
     public static void sendStartToDb(String execName) {
         sendToDb(execName, true);
     }
@@ -106,10 +107,10 @@ public class FaultController {
         e.getColumns().put("pod_name", hostname);
         e.getColumns().put("failure", name);
         e.getColumns().put("started", started);
-        
+
         List<IK8sDataElementTimeseries> data = new ArrayList<IK8sDataElementTimeseries>();
         data.add(e);
-        
+
         try {
             influxDB.writeData(MEASURE_NAME, data, fields);
         } catch (Exception ex) {
@@ -117,5 +118,5 @@ public class FaultController {
             ex.printStackTrace();
         }
     }
-    
+
 }

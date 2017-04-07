@@ -24,18 +24,20 @@ public class InfluxDbExtractor {
     private DbFetcher db;
     private static final String FILE_PATH = "influxDb.log";
     private static final SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.SSS");
-    
+
     private static String header = null;
-    
+
     public static void main(String[] args) throws InterruptedException {
-        
+
+    	boolean useProxy = false;
         InfluxDbDataSourceConfig config = new InfluxDbDataSourceConfig(
                 "http://10.0.6.56:30343",
                 "root", "root",
                 "k8s",
                 50,
-                InfluxDbDataSourceConfig.CPU_ALL_QUERY);
-        
+                InfluxDbDataSourceConfig.CPU_ALL_QUERY,
+                useProxy);
+
         InfluxDbExtractor extractor = new InfluxDbExtractor();
         BufferedWriter writer = null;
         try {
@@ -44,13 +46,13 @@ public class InfluxDbExtractor {
 
             Date lastDate = null;
             List<String> lineBuffer = new ArrayList<String>();
-            
+
             while (true) {
                 //writer = new BufferedWriter(new FileWriter(FILE_PATH, false));
-                
+
                 lastDate = extractor.extract(config, lastDate, true, writer, lineBuffer);
                 //writer.flush();
-                
+
                 while(lineBuffer.size() > 5000) {
                     lineBuffer.remove(0);
                 }
@@ -62,13 +64,13 @@ public class InfluxDbExtractor {
             ex.printStackTrace();
             Logger.getLogger(InfluxDbExtractor.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            
+
         }
     }
 
     private Date extract(InfluxDbDataSourceConfig config, Date writeFromDate, boolean writeHeader,
             BufferedWriter writer, List<String> lineBuffer) throws IOException {
-        
+
         Date lastDate = writeFromDate;
         db = new DbFetcher(config);
         List<DbEntry> data = db.GetData();
@@ -114,9 +116,9 @@ public class InfluxDbExtractor {
                 lastDate = e.getTime();
             }
         }
-        
+
         writer = new BufferedWriter(new FileWriter(FILE_PATH, false));
-        
+
         writer.write(header);
         for(String line : lineBuffer) {
             writer.write(line);

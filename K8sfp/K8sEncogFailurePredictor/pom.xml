@@ -17,15 +17,5 @@
   		<artifactId>ServiceBridge</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
-    <dependency>
-      <groupId>weka.lib</groupId>
-      <artifactId>weka.lib</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>weka.timeseries</groupId>
-      <artifactId>weka.timeseries</artifactId>
-      <version>1.0</version>
-    </dependency>
   </dependencies>
 </project>
