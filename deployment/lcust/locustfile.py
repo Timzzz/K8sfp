@@ -8,9 +8,9 @@ import os
 from requests.exceptions import ConnectionError
 import urllib2
 
-curr_gets = 0
-
 class MyTaskSet(TaskSet):
+    
+    curr_gets = 0
 
     def on_start(self):
         self.user_id = randint(1,999999999)
@@ -18,7 +18,6 @@ class MyTaskSet(TaskSet):
 
     @task(1)
     def view(self):
-	curr_gets = curr_gets + 1
         with self.client.get("/jsp/rss.jsp", catch_response=True) as response:
             self.log_response(response)
 
@@ -103,6 +102,7 @@ class MyTaskSet(TaskSet):
             self.log_response(response)
 
     def log_response(self, response):
+	self.curr_gets = self.curr_gets + 1
         json_body = [
                 {
                     "measurement": "test_results",
@@ -113,7 +113,7 @@ class MyTaskSet(TaskSet):
                         "path_url": response.request.path_url,
                         "method": response.request.method,
                         "body": response.request.body,
-                        "curr_gets": curr_gets
+                        "curr_gets": self.curr_gets
                         },
                     "fields": {
                         "status_code": str(response.status_code),
@@ -123,7 +123,7 @@ class MyTaskSet(TaskSet):
                         "path_url": response.request.path_url,
                         "method": response.request.method,
                         "body": response.request.body,
-                        "curr_gets": curr_gets
+                        "curr_gets": self.curr_gets
                         }
                     }
                 ]
