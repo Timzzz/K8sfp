@@ -107,7 +107,7 @@ class MyTaskSet(TaskSet):
     def log_response(self, response):
 	curr_requests = curr_requests + 1
 	if(response.status_code != 200):
-		self.curr_fails = self.curr_fails + 1
+		curr_fails = curr_fails + 1
         json_body = [
                 {
                     "measurement": "test_results",
