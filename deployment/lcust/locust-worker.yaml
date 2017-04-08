@@ -31,3 +31,5 @@ spec:
               value: influxdb
             - name: INFLUXDB_PORT
               value: '8086'
+            - name: LOCUST_FILE_URL
+              value: 'https://raw.githubusercontent.com/Timzzz/K8sfp/master/deployment/lcust/locustfile.py'

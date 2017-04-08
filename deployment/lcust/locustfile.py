@@ -12,6 +12,22 @@ import time
 
 class MyTaskSet(TaskSet):
     
+	def scheduled_write(self):
+		json_body = [
+		{
+			"measurement": "test_results",
+			"tags": {
+			"curr_requests": curr_requests,
+			"curr_fails": curr_fails
+		},
+			"fields": {
+       			"curr_requests": curr_requests,
+			"curr_fails": curr_fails
+			}
+		}
+		]
+		InfluxDBWriter.write(json_body)
+
     def on_start(self):
         self.user_id = randint(1,999999999)
 	schedule.every(1).seconds.do(scheduled_write)
@@ -117,23 +133,6 @@ class MyTaskSet(TaskSet):
 		curr_fails = curr_fails + 1
 	schedule.run_pending()
         
-
-	def scheduled_write(self):
-		json_body = [
-		{
-			"measurement": "test_results",
-			"tags": {
-			"curr_requests": curr_requests,
-			"curr_fails": curr_fails
-		},
-			"fields": {
-       			"curr_requests": curr_requests,
-			"curr_fails": curr_fails
-			}
-		}
-		]
-		InfluxDBWriter.write(json_body)
-
 
 class MyLocust(HttpLocust):
     task_set = MyTaskSet

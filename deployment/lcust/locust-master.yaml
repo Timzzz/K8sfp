@@ -1,32 +1,4 @@
-kind: Service
-apiVersion: v1
-metadata:
-  name: locust-master
-  labels:
-    name: locust
-    role: master
-spec:
-  type: NodePort
-  ports:
-    - port: 8089
-      targetPort: loc-master-web
-      protocol: TCP
-      name: loc-master-web
-      nodePort: 31050
-    - port: 5557
-      targetPort: loc-master-p1
-      protocol: TCP
-      name: loc-master-p1
-      nodePort: 31051
-    - port: 5558
-      targetPort: loc-master-p2
-      protocol: TCP
-      name: loc-master-p2
-      nodePort: 31052
-  selector:
-    name: locust
-    role: master
----
+
 kind: ReplicationController
 apiVersion: v1
 metadata:
@@ -58,6 +30,8 @@ spec:
               value: influxdb
             - name: INFLUXDB_PORT
               value: '8086'
+            - name: LOCUST_FILE_URL
+              value: 'https://raw.githubusercontent.com/Timzzz/K8sfp/master/deployment/lcust/locustfile.py'
           ports:
             - name: loc-master-web
               containerPort: 8089
