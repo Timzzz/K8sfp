@@ -10,9 +10,7 @@ import urllib2
 import schedule
 import time
 
-class MyTaskSet(TaskSet):
-    
-    def job(self):
+def job():
         json_body = [
                 {
                     "measurement": "test_results",
@@ -27,6 +25,8 @@ class MyTaskSet(TaskSet):
                     }
                 ]
         InfluxDBWriter.write(json_body)
+
+class MyTaskSet(TaskSet):
     
     def on_start(self):
         self.user_id = randint(1,999999999)
