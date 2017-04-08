@@ -17,28 +17,16 @@ class MyTaskSet(TaskSet):
                 {
                     "measurement": "test_results",
                     "tags": {
-                        "status_code": str(response.status_code),
-                        "reason": response.reason,
-                        "url": response.request.url,
-                        "path_url": response.request.path_url,
-                        "method": response.request.method,
-                        "body": response.request.body,
                         "curr_requests": curr_requests,
                         "curr_fails": curr_fails
                         },
                     "fields": {
-                        "status_code": str(response.status_code),
-                        "reason": response.reason,
-                        "elapsed": response.elapsed.total_seconds(),
-                        "url": response.request.url,
-                        "path_url": response.request.path_url,
-                        "method": response.request.method,
-                        "body": response.request.body,
                         "curr_requests": curr_requests,
                         "curr_fails": curr_fails
                         }
                     }
                 ]
+        InfluxDBWriter.write(json_body)
     
     def on_start(self):
         self.user_id = randint(1,999999999)
@@ -143,33 +131,6 @@ class MyTaskSet(TaskSet):
 	curr_requests = curr_requests + 1
 	if(response.status_code != 200):
 		curr_fails = curr_fails + 1
-        json_body = [
-                {
-                    "measurement": "test_results",
-                    "tags": {
-                        "status_code": str(response.status_code),
-                        "reason": response.reason,
-                        "url": response.request.url,
-                        "path_url": response.request.path_url,
-                        "method": response.request.method,
-                        "body": response.request.body,
-                        "curr_requests": curr_requests,
-                        "curr_fails": curr_fails
-                        },
-                    "fields": {
-                        "status_code": str(response.status_code),
-                        "reason": response.reason,
-                        "elapsed": response.elapsed.total_seconds(),
-                        "url": response.request.url,
-                        "path_url": response.request.path_url,
-                        "method": response.request.method,
-                        "body": response.request.body,
-                        "curr_requests": curr_requests,
-                        "curr_fails": curr_fails
-                        }
-                    }
-                ]
-        InfluxDBWriter.write(json_body)
         schedule.run_pending()
 
 class MyLocust(HttpLocust):
