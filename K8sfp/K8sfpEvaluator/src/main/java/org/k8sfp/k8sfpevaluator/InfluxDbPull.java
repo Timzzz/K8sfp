@@ -51,12 +51,17 @@ public class InfluxDbPull {
 			XmlSerializer.serialize(pathConf.filePath, InfluxDbPullConfig.DEFAULT);
 		}
 		
-		new InfluxDbPull().Run(conf);// conf);
+		new InfluxDbPull().Run(conf);
 		
 		System.out.println("Done.");
 		
 	}
 	
+	/**
+	 * Creates Queries from the config file
+	 *
+	 * @param pullConfig
+	 */
 	private void Run(InfluxDbPullConfig pullConfig) {
 		
 		List<String> keyList = pullConfig.keyList;
@@ -74,7 +79,7 @@ public class InfluxDbPull {
 			IK8sTimeSeriesDataSource ds = connections.get(DbKey);
 			InfluxDbDataSourceConfig dsConf = (InfluxDbDataSourceConfig) ds.getConfiguration();
 			dsConf.setDbName(item.dbName);
-			keyList.add(item.measureName);
+			keyList.addAll(item.measureNames);
 			dsConf.setRequestQuery(item.query);
 			data = ds.getData();
 			dataAll.add(data);
@@ -86,6 +91,13 @@ public class InfluxDbPull {
 		writeToCsv(dataMerged, "eventlog.csv", keyList);
 	}
 	
+	/**
+	 * Left Join on Measurements
+	 *
+	 * @param data
+	 * @param data1
+	 * @return
+	 */
 	private static List<IK8sDataElement> combineMeasurements(List<IK8sDataElement> data, List<IK8sDataElement> data1) {
 		List<IK8sDataElement> res = new ArrayList<IK8sDataElement>();
 		for (IK8sDataElement it : data) {
@@ -111,77 +123,6 @@ public class InfluxDbPull {
 			res.add(itt);
 		}
 		return res;
-	}
-	
-	private void Run2() {
-		int limit = 10;
-		boolean useProxy = true;
-		InfluxDbDataSourceConfig conf = new InfluxDbDataSourceConfig("http://10.0.11.61:32601", "root", "root", null,
-		        100, null, useProxy);
-		IK8sTimeSeriesDataSource ds = (IK8sTimeSeriesDataSource) CommonDataSourceFactory
-		        .create(CommonDataSourceFactory.DataSourceType.InfluxDbSource, conf);
-		
-		List<String> keyList = new ArrayList<String>();
-		List<IK8sDataElement> data1 = null;
-		List<IK8sDataElement> data2 = null;
-		List<IK8sDataElement> datanodecpu = null;
-		
-		keyList.add("_DATE");
-		keyList.add("host");
-		String key;
-		
-		// conf.setDbName("k8s");
-		// conf.setRequestQuery(String.format("SHOW MEASUREMENTS", limit));
-		// data1 = ds.getData();
-		
-		conf.setDbName("k8s");
-		key = "cpuusage";
-		keyList.add(key);
-		conf.setRequestQuery(String.format(
-		        "SELECT value as cpuusage, pod_name as host FROM \"cpu/usage_rate\" WHERE pod_name =~ /edge-8vsjk.*/ ORDER BY DESC LIMIT %s",
-		        limit));
-		data1 = ds.getData();
-		
-		conf.setDbName("k8s");
-		key = "memusage";
-		keyList.add(key);
-		conf.setRequestQuery(String.format(
-		        "SELECT value as memusage, pod_name FROM \"memory/usage\" WHERE pod_name =~ /edge-8vsjk.*/  ORDER BY DESC LIMIT %s",
-		        limit));
-		data2 = ds.getData();
-		
-		conf.setDbName("k8s");
-		key = "nodecpu";
-		keyList.add(key);
-		conf.setRequestQuery(String.format(
-		        "SELECT value as nodecpu FROM \"cpu/node_utilization\" WHERE nodename =~ /.*61/ ORDER BY DESC LIMIT %s",
-		        limit));
-		datanodecpu = ds.getData();
-		
-		conf = new InfluxDbDataSourceConfig("http://10.0.11.61:31070", "root", "root", null, 100, null, useProxy);
-		conf.setDbName("kieker");
-		ds = (IK8sTimeSeriesDataSource) CommonDataSourceFactory
-		        .create(CommonDataSourceFactory.DataSourceType.InfluxDbSource, conf);
-		
-		// key = "log";
-		// keyList.add(key);
-		// conf.setRequestQuery(String.format("SELECT hostname as host,
-		// operation_signature as log FROM operation_execution WHERE hostname =~
-		// /.*edge.*/ ORDER BY DESC LIMIT 0"));
-		// List<IK8sDataElement> data = ds.getData();
-		
-		conf.setDbName("locust");
-		key = "locustusers";
-		keyList.add(key);
-		conf.setRequestQuery(
-		        String.format("SELECT user_count as locustusers FROM user_count ORDER BY DESC LIMIT %s", limit));
-		List<IK8sDataElement> datalocustUsers = ds.getData();
-		
-		List<IK8sDataElement> res = data1; // combineMeasurements(data, data1);
-		res = combineMeasurements(res, data2);
-		res = combineMeasurements(res, datanodecpu);
-		res = combineMeasurements(res, datalocustUsers);
-		writeToCsv(res, "eventlog.csv", keyList);
 	}
 	
 	private static void writeToCsv(List<IK8sDataElement> list, String path, List<String> keyList) {

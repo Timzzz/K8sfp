@@ -34,9 +34,11 @@ public class InfluxDbPullConfig implements Serializable {
 		List<InfluxDbDataSourceConfigItem> cItems = new ArrayList<>();
 		cItems.add(cItem);
 		
+		List<String> keys = new ArrayList<>();
+		keys.add("cpuusage");
 		InfluxDbPullConfigItem pullItem = new InfluxDbPullConfigItem(
 		        "SELECT value as cpuusage, pod_name as host FROM \"cpu/usage_rate\" WHERE pod_name =~ /edge-8vsjk.*/ ORDER BY DESC LIMIT 100",
-		        "k8s", "cpuusage", "default", 100);
+		        "k8s", keys, "default");
 		ArrayList<InfluxDbPullConfigItem> pullItems = new ArrayList<>();
 		pullItems.add(pullItem);
 		

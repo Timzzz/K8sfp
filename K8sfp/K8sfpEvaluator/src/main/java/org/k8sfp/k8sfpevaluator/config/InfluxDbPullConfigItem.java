@@ -1,5 +1,7 @@
 package org.k8sfp.k8sfpevaluator.config;
 
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -10,17 +12,15 @@ public class InfluxDbPullConfigItem {
 	@Expose
 	public String dbName;
 	@Expose
-	public String measureName;
+	public List<String> measureNames;
 	@Expose
 	public String dbConfigKey;
-	@Expose
-	public int limit;
 	
-	public InfluxDbPullConfigItem(String query, String dbName, String measureName, String dbConfigKey, int limit) {
+	public InfluxDbPullConfigItem(String query, String dbName, List<String> measureName, String dbConfigKey) {
 		super();
 		this.query = query;
 		this.dbName = dbName;
-		this.measureName = measureName;
+		this.measureNames = measureName;
 		this.dbConfigKey = dbConfigKey;
 	}
 	
