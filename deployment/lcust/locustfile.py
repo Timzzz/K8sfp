@@ -9,6 +9,9 @@ from requests.exceptions import ConnectionError
 import urllib2
 import schedule
 import time
+import socket
+
+hostname = socket.gethostname()
 
 def job():
         json_body = [
@@ -16,11 +19,13 @@ def job():
                     "measurement": "test_results",
                     "tags": {
                         "curr_requests": curr_requests,
-                        "curr_fails": curr_fails
+                        "curr_fails": curr_fails,
+                        "hostname": hostname
                         },
                     "fields": {
                         "curr_requests": curr_requests,
-                        "curr_fails": curr_fails
+                        "curr_fails": curr_fails,
+                        "hostname": hostname
                         }
                     }
                 ]
