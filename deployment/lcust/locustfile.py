@@ -12,12 +12,6 @@ class MyTaskSet(TaskSet):
     
     def on_start(self):
         self.user_id = randint(1,999999999)
-        curr_requests = 0
-	global curr_requests
-	global curr_fails
-	if curr_requests is None:
-		curr_requests = 0
-    		curr_fails = 0
 
     @task(1)
     def view(self):
@@ -105,6 +99,11 @@ class MyTaskSet(TaskSet):
             self.log_response(response)
 
     def log_response(self, response):
+	global curr_requests
+	global curr_fails
+	if curr_requests is None:
+		curr_requests = 0
+    		curr_fails = 0
 	curr_requests = curr_requests + 1
 	if(response.status_code != 200):
 		curr_fails = curr_fails + 1
