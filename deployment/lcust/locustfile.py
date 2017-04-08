@@ -8,13 +8,8 @@ import os
 from requests.exceptions import ConnectionError
 import urllib2
 
-curr_requests = 0
-curr_fails = 0
-
 class MyTaskSet(TaskSet):
     
-    
-
     def on_start(self):
         self.user_id = randint(1,999999999)
         curr_requests = 0
@@ -140,6 +135,8 @@ class MyLocust(HttpLocust):
     task_set = MyTaskSet
     min_wait = 5000
     max_wait = 10000
+    curr_requests = 0
+    curr_fails = 0
 
 class InfluxDBWriter():
     connected = False
@@ -185,5 +182,7 @@ def log_user_count(user_count, **kw):
 def log_stop(**kw):
     log_user_count(0)
 
+curr_requests = 0
+curr_fails = 0
 events.hatch_complete += log_user_count
 events.locust_stop_hatching += log_stop
