@@ -18,9 +18,6 @@ def job():
                 {
                     "measurement": "test_results",
                     "tags": {
-                        "curr_requests": curr_requests,
-                        "curr_fails": curr_fails,
-                        "hostname": hostname
                         },
                     "fields": {
                         "curr_requests": curr_requests,
