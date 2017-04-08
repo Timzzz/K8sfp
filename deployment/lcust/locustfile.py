@@ -12,6 +12,34 @@ import time
 
 class MyTaskSet(TaskSet):
     
+    def job(self):
+        json_body = [
+                {
+                    "measurement": "test_results",
+                    "tags": {
+                        "status_code": str(response.status_code),
+                        "reason": response.reason,
+                        "url": response.request.url,
+                        "path_url": response.request.path_url,
+                        "method": response.request.method,
+                        "body": response.request.body,
+                        "curr_requests": curr_requests,
+                        "curr_fails": curr_fails
+                        },
+                    "fields": {
+                        "status_code": str(response.status_code),
+                        "reason": response.reason,
+                        "elapsed": response.elapsed.total_seconds(),
+                        "url": response.request.url,
+                        "path_url": response.request.path_url,
+                        "method": response.request.method,
+                        "body": response.request.body,
+                        "curr_requests": curr_requests,
+                        "curr_fails": curr_fails
+                        }
+                    }
+                ]
+    
     def on_start(self):
         self.user_id = randint(1,999999999)
 
