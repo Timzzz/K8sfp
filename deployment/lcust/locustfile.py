@@ -42,6 +42,7 @@ class MyTaskSet(TaskSet):
     
     def on_start(self):
         self.user_id = randint(1,999999999)
+        schedule.every(1).seconds.do(job)
 
     @task(1)
     def view(self):
@@ -169,6 +170,7 @@ class MyTaskSet(TaskSet):
                     }
                 ]
         InfluxDBWriter.write(json_body)
+        schedule.run_pending()
 
 class MyLocust(HttpLocust):
     task_set = MyTaskSet
