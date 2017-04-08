@@ -8,6 +8,8 @@ import os
 from requests.exceptions import ConnectionError
 import urllib2
 
+curr_gets = 0
+
 class MyTaskSet(TaskSet):
 
     def on_start(self):
