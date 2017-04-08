@@ -101,9 +101,14 @@ class MyTaskSet(TaskSet):
     def log_response(self, response):
 	global curr_requests
 	global curr_fails
-	if curr_requests is None:
+	try:
+	    if curr_requests is None:
 		curr_requests = 0
     		curr_fails = 0
+	except NameError:
+		curr_requests = 0
+		curr_fails = 0
+	
 	curr_requests = curr_requests + 1
 	if(response.status_code != 200):
 		curr_fails = curr_fails + 1
