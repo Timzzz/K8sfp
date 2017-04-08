@@ -10,11 +10,12 @@ import urllib2
 
 class MyTaskSet(TaskSet):
     
-    curr_gets = 0
+    curr_requests = 0
+    curr_fails = 0
 
     def on_start(self):
         self.user_id = randint(1,999999999)
-        curr_gets = 0
+        curr_requests = 0
 
     @task(1)
     def view(self):
@@ -102,7 +103,9 @@ class MyTaskSet(TaskSet):
             self.log_response(response)
 
     def log_response(self, response):
-	self.curr_gets = self.curr_gets + 1
+	self.curr_requests = self.curr_requests + 1
+	if(esponse.status_code != 200):
+		self.curr_fails = self.curr_fails + 1
         json_body = [
                 {
                     "measurement": "test_results",
@@ -113,7 +116,8 @@ class MyTaskSet(TaskSet):
                         "path_url": response.request.path_url,
                         "method": response.request.method,
                         "body": response.request.body,
-                        "curr_gets": self.curr_gets
+                        "curr_requests": self.curr_requests,
+                        "curr_fails": self.curr_fails
                         },
                     "fields": {
                         "status_code": str(response.status_code),
@@ -123,7 +127,8 @@ class MyTaskSet(TaskSet):
                         "path_url": response.request.path_url,
                         "method": response.request.method,
                         "body": response.request.body,
-                        "curr_gets": self.curr_gets
+                        "curr_requests": self.curr_requests,
+                        "curr_fails": self.curr_fails
                         }
                     }
                 ]
