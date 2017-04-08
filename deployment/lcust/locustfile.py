@@ -12,8 +12,6 @@ import time
 import socket
 
 hostname = socket.gethostname()
-curr_requests = 0
-curr_fails = 0
 
 def job():
         json_body = [
@@ -29,8 +27,6 @@ def job():
                     }
                 ]
         InfluxDBWriter.write(json_body)
-
-schedule.every(1).minutes.do(job)
 
 class MyTaskSet(TaskSet):
     
@@ -123,6 +119,17 @@ class MyTaskSet(TaskSet):
             self.log_response(response)
 
     def log_response(self, response):
+	global curr_requests
+	global curr_fails
+	try:
+	    if curr_requests is None:
+		curr_requests = 0
+    		curr_fails = 0
+	except NameError:
+		curr_requests = 0
+		curr_fails = 0
+		schedule.every(1).minutes.do(job)
+	
 	curr_requests = curr_requests + 1
 	if(response.status_code != 200):
 		curr_fails = curr_fails + 1
