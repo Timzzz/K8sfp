@@ -14,7 +14,7 @@ class MyTaskSet(TaskSet):
     
     def on_start(self):
         self.user_id = randint(1,999999999)
-	schedule.every(1).seconds.do(job)
+	schedule.every(1).seconds.do(scheduled_write)
 
     @task(1)
     def view(self):
