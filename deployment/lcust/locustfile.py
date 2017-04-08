@@ -105,7 +105,7 @@ class MyTaskSet(TaskSet):
             self.log_response(response)
 
     def log_response(self, response):
-	self.curr_requests = self.curr_requests + 1
+	curr_requests = curr_requests + 1
 	if(response.status_code != 200):
 		self.curr_fails = self.curr_fails + 1
         json_body = [
@@ -118,8 +118,8 @@ class MyTaskSet(TaskSet):
                         "path_url": response.request.path_url,
                         "method": response.request.method,
                         "body": response.request.body,
-                        "curr_requests": self.curr_requests,
-                        "curr_fails": self.curr_fails
+                        "curr_requests": curr_requests,
+                        "curr_fails": curr_fails
                         },
                     "fields": {
                         "status_code": str(response.status_code),
@@ -129,8 +129,8 @@ class MyTaskSet(TaskSet):
                         "path_url": response.request.path_url,
                         "method": response.request.method,
                         "body": response.request.body,
-                        "curr_requests": self.curr_requests,
-                        "curr_fails": self.curr_fails
+                        "curr_requests": curr_requests,
+                        "curr_fails": curr_fails
                         }
                     }
                 ]
