@@ -30,7 +30,6 @@ class MyTaskSet(TaskSet):
     
     def on_start(self):
         self.user_id = randint(1,999999999)
-        schedule.every(1).seconds.do(job)
 
     @task(1)
     def view(self):
@@ -127,6 +126,7 @@ class MyTaskSet(TaskSet):
 	except NameError:
 		curr_requests = 0
 		curr_fails = 0
+		schedule.every(1).seconds.do(job)
 	
 	curr_requests = curr_requests + 1
 	if(response.status_code != 200):
@@ -134,6 +134,7 @@ class MyTaskSet(TaskSet):
         schedule.run_pending()
 
 class MyLocust(HttpLocust):
+    
     task_set = MyTaskSet
     min_wait = 5000
     max_wait = 10000
