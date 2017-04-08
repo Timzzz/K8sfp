@@ -8,10 +8,12 @@ import os
 from requests.exceptions import ConnectionError
 import urllib2
 
+curr_requests = 0
+curr_fails = 0
+
 class MyTaskSet(TaskSet):
     
-    curr_requests = 0
-    curr_fails = 0
+    
 
     def on_start(self):
         self.user_id = randint(1,999999999)
