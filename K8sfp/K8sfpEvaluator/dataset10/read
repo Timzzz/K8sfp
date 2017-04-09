@@ -1,0 +1,17 @@
+* done with stress --cpu 2000 --timeout 6000 on *.62, *.62 only containing middletier, locustmaster and one of two locustworker
+
+[fedora@k8s-tz-1 scripts]$ python run-locust2.py
+('2017-04-09 17:36:06', 1491759366, 'Users=', 3, 'Duration=', 3, 'min')
+('2017-04-09 17:39:08', 1491759548, 'Users=', 5, 'Duration=', 3, 'min')
+('2017-04-09 17:42:08', 1491759728, 'Users=', 10, 'Duration=', 3, 'min')
+('2017-04-09 17:45:08', 1491759908, 'Users=', 20, 'Duration=', 3, 'min')
+('2017-04-09 17:48:08', 1491760088, 'Users=', 50, 'Duration=', 3, 'min')
+('2017-04-09 17:51:08', 1491760268, 'Users=', 100, 'Duration=', 3, 'min')
+('2017-04-09 17:54:09', 1491760449, 'Users=', 150, 'Duration=', 3, 'min')
+('2017-04-09 17:57:09', 1491760629, 'Users=', 200, 'Duration=', 3, 'min')
+('2017-04-09 18:00:10', 1491760810, 'Users=', 250, 'Duration=', 3, 'min')
+('2017-04-09 18:03:11', 1491760991, 'Users=', 300, 'Duration=', 3, 'min')
+('2017-04-09 18:06:11', 1491761171, 'Users=', 350, 'Duration=', 3, 'min')
+('2017-04-09 18:09:12', 1491761352, 'Users=', 400, 'Duration=', 3, 'min')
+('2017-04-09 18:12:12', 1491761532, 'Users=', 500, 'Duration=', 3, 'min')
+('2017-04-09 18:15:13', 1491761713, 'Users=', 600, 'Duration=', 3, 'min')

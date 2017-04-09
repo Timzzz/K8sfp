@@ -1,0 +1,45 @@
+* stress on .61
+
+[fedora@k8s-tz-1 scripts]$ python run-stress.py 
+('2017-04-09 16:08:43', 1491754123, 'workers=', 20, 'Duration=', 3, 'min')
+stress: info: [30810] dispatching hogs: 20 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [30810] successful run completed in 180s
+('2017-04-09 16:11:43', 1491754303, 'workers=', 40, 'Duration=', 3, 'min')
+stress: info: [1055] dispatching hogs: 40 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [1055] successful run completed in 180s
+('2017-04-09 16:14:43', 1491754483, 'workers=', 80, 'Duration=', 3, 'min')
+stress: info: [4478] dispatching hogs: 80 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [4478] successful run completed in 180s
+('2017-04-09 16:17:43', 1491754663, 'workers=', 160, 'Duration=', 3, 'min')
+stress: info: [7187] dispatching hogs: 160 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [7187] successful run completed in 180s
+('2017-04-09 16:20:43', 1491754843, 'workers=', 240, 'Duration=', 3, 'min')
+stress: info: [9903] dispatching hogs: 240 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [9903] successful run completed in 180s
+('2017-04-09 16:23:43', 1491755023, 'workers=', 480, 'Duration=', 3, 'min')
+stress: info: [13249] dispatching hogs: 480 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [13249] successful run completed in 181s
+('2017-04-09 16:26:44', 1491755204, 'workers=', 960, 'Duration=', 3, 'min')
+stress: info: [16204] dispatching hogs: 960 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [16204] successful run completed in 180s
+('2017-04-09 16:29:44', 1491755384, 'workers=', 1440, 'Duration=', 3, 'min')
+stress: info: [19626] dispatching hogs: 1440 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [19626] successful run completed in 180s
+('2017-04-09 16:32:44', 1491755564, 'workers=', 1800, 'Duration=', 3, 'min')
+stress: info: [24177] dispatching hogs: 1800 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [24177] successful run completed in 180s
+('2017-04-09 16:35:44', 1491755744, 'workers=', 2025, 'Duration=', 3, 'min')
+stress: info: [28467] dispatching hogs: 2025 cpu, 0 io, 0 vm, 0 hdd
+stress: info: [28467] successful run completed in 180s
+('2017-04-09 16:38:44', 1491755924, 'workers=', 2278, 'Duration=', 3, 'min')
+stress: info: [710] dispatching hogs: 2278 cpu, 0 io, 0 vm, 0 hdd
+^CTraceback (most recent call last):
+  File "run-stress.py", line 13, in <module>
+    call(["stress", "--cpu", str(p[0]), "--timeout", str(p[1]*60)])
+  File "/usr/lib64/python2.7/subprocess.py", line 168, in call
+    return Popen(*popenargs, **kwargs).wait()
+  File "/usr/lib64/python2.7/subprocess.py", line 1073, in wait
+    pid, sts = _eintr_retry_call(os.waitpid, self.pid, 0)
+  File "/usr/lib64/python2.7/subprocess.py", line 121, in _eintr_retry_call
+    return func(*args)
+KeyboardInterrupt

@@ -9,27 +9,32 @@ import org.k8sfp.interfaces.IK8sDataSourceConfig;
  */
 public class CommonDataSourceFactory {
 	
-	public static enum DataSourceType{
-		InfluxDbSource,
-                VersatileInfluxDbSource
+	public static enum DataSourceType {
+		InfluxDbSource, VersatileInfluxDbSource, CsvDatasource
 	}
-        
-        private CommonDataSourceFactory(){}
 	
-        public static IK8sDataSource create(DataSourceType type, IK8sDataSourceConfig config) {
-            IK8sDataSource res = null;
-            switch(type) {
-                case InfluxDbSource:
-                    res = new InfluxDbDataSource((InfluxDbDataSourceConfig)config);
-                    break;
-                case VersatileInfluxDbSource:
-                    res = new VersatileInfluxDbDataSource((InfluxDbDataSourceConfig)config);
-                    break;
-                default: 
-                    break;
-            }
-            return res;
-            //throw new UnsupportedOperationException();
-        }
-        
+	private CommonDataSourceFactory() {
+	}
+	
+	public static IK8sDataSource create(DataSourceType type, IK8sDataSourceConfig config) {
+		try {
+			IK8sDataSource res = null;
+			switch (type) {
+				case InfluxDbSource:
+					res = new InfluxDbDataSource((InfluxDbDataSourceConfig) config);
+					break;
+				case VersatileInfluxDbSource:
+					res = new VersatileInfluxDbDataSource((InfluxDbDataSourceConfig) config);
+					break;
+				case CsvDatasource:
+					res = new CsvDataSource(config);
+				default:
+					break;
+			}
+			return res;
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+	
 }
