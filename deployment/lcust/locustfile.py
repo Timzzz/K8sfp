@@ -119,7 +119,7 @@ class MyTaskSet(TaskSet):
             self.log_response(response)
     
     def log_response(self, response):
-        log_response_all(response)
+        self.log_response_all(response)
         global curr_requests
         global curr_fails
         try:
