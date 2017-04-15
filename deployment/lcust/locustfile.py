@@ -142,7 +142,7 @@ class MyTaskSet(TaskSet):
             status_500_count = status_500_count + 1
         elif(response.status_code == 0):
             status_0_count = status_0_count + 1
-        else
+        else:
             status_other_count = status_other_count + 1
         
         schedule.run_pending()
