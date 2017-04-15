@@ -16,12 +16,14 @@ hostname = socket.gethostname()
 def job():
         json_body = [
                 {
-                    "measurement": "stats",
+                    "measurement": "test_stats",
                     "tags": {
                         },
                     "fields": {
-                        "curr_requests": curr_requests,
-                        "curr_fails": curr_fails,
+                        "status_200_count": status_200_count,
+                        "status_500_count": status_500_count,
+                        "status_0_count": status_0_count,
+                        "status_other_count": status_other_count,
                         "hostname": hostname
                         }
                     }
@@ -120,20 +122,28 @@ class MyTaskSet(TaskSet):
     
     def log_response(self, response):
         self.log_response_all(response)
-        global curr_requests
-        global curr_fails
+        global status_200_count
+        global status_500_count
+        global status_0_count
+        global status_other_count
         try:
-            if curr_requests is None:
-                curr_requests = 0
-                curr_fails = 0
+            if status_200_count is None:
+                status_200_count = 0
         except NameError:
-            curr_requests = 0
-            curr_fails = 0
+            status_200_count = 0
+            status_500_count = 0
+            status_0_count = 0
+            status_other_count = 0
             schedule.every(1).minutes.do(job)
         
-        curr_requests = curr_requests + 1
-        if(response.status_code != 200):
-            curr_fails = curr_fails + 1
+        if(response.status_code == 200):
+            status_200_count = status_200_count + 1
+        elif(response.status_code == 500):
+            status_500_count = status_500_count + 1
+        elif(response.status_code == 0):
+            status_0_count = status_0_count + 1
+        else
+            status_other_count = status_other_count + 1
         
         schedule.run_pending()
 
