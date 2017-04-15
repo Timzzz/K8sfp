@@ -130,11 +130,12 @@ class MyTaskSet(TaskSet):
             curr_requests = 0
             curr_fails = 0
             schedule.every(1).minutes.do(job)
-    
+        
         curr_requests = curr_requests + 1
         if(response.status_code != 200):
             curr_fails = curr_fails + 1
-            schedule.run_pending()
+        
+        schedule.run_pending()
 
     def log_response_all(self, response):
         json_body = [
