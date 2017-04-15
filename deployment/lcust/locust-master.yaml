@@ -42,3 +42,5 @@ spec:
             - name: loc-master-p2
               containerPort: 5558
               protocol: TCP
+      nodeSelector:
+          nodeassignment: 10.0.11.64

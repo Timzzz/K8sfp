@@ -121,7 +121,7 @@ class MyTaskSet(TaskSet):
             self.log_response(response)
     
     def log_response(self, response):
-        self.log_response_all(response)
+        'self.log_response_all(response)
         global status_200_count
         global status_500_count
         global status_0_count
