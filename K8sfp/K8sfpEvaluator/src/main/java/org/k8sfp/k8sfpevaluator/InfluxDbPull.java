@@ -37,6 +37,8 @@ public class InfluxDbPull {
 	private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
 	private static final String CONFIG_PATH = "./config/selection.conf";
 	
+	private HashMap<String, IK8sTimeSeriesDataSource> connections = new HashMap<>();
+	
 	public static void main(String[] args) {
 		System.out.println("InfluxDbPull start..");
 		
@@ -50,7 +52,6 @@ public class InfluxDbPull {
 			System.out.println("Creating default Config.");
 			XmlSerializer.serialize(pathConf.filePath, InfluxDbPullConfig.DEFAULT);
 		}
-		
 		new InfluxDbPull().Run(conf);
 		
 		System.out.println("Done.");
@@ -65,11 +66,18 @@ public class InfluxDbPull {
 	private void Run(InfluxDbPullConfig pullConfig) {
 		
 		List<String> keyList = pullConfig.keyList;
+		List<IK8sDataElement> dataMerged = getMergedData(pullConfig);
+		writeToCsv(dataMerged, "eventlog.csv", keyList);
+	}
+	
+	public List<IK8sDataElement> getMergedData(InfluxDbPullConfig pullConfig) {
+		List<String> keyList = pullConfig.keyList;
 		
-		HashMap<String, IK8sTimeSeriesDataSource> connections = new HashMap<>();
 		for (InfluxDbDataSourceConfigItem it : pullConfig.conf) {
-			connections.put(it.dbConfigKey, (IK8sTimeSeriesDataSource) CommonDataSourceFactory
-			        .create(CommonDataSourceFactory.DataSourceType.InfluxDbSource, it.config));
+			if (!connections.containsKey(it.dbConfigKey)) {
+				connections.put(it.dbConfigKey, (IK8sTimeSeriesDataSource) CommonDataSourceFactory
+				        .create(CommonDataSourceFactory.DataSourceType.InfluxDbSource, it.config));
+			}
 		}
 		
 		List<List<IK8sDataElement>> dataAll = new ArrayList<List<IK8sDataElement>>();
@@ -88,7 +96,7 @@ public class InfluxDbPull {
 		for (int i = 1; i < dataAll.size(); ++i) {
 			dataMerged = combineMeasurements(dataMerged, dataAll.get(i));
 		}
-		writeToCsv(dataMerged, "eventlog.csv", keyList);
+		return dataMerged;
 	}
 	
 	/**
@@ -99,6 +107,8 @@ public class InfluxDbPull {
 	 * @return
 	 */
 	private static List<IK8sDataElement> combineMeasurements(List<IK8sDataElement> data, List<IK8sDataElement> data1) {
+		if (data1 == null || data1.size() == 0)
+			return data;
 		List<IK8sDataElement> res = new ArrayList<IK8sDataElement>();
 		for (IK8sDataElement it : data) {
 			IK8sDataElementTimeseries itt = (IK8sDataElementTimeseries) it;

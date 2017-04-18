@@ -1,0 +1,26 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: cpu-stress
+  labels:
+    name: cpu-stress
+spec:
+  selector:
+    name: cpu-stress
+  template:
+    metadata:
+      labels:
+        name: cpu-stress
+    spec:
+      containers:
+        - name: cpu-stress
+          image: timz/stress
+          imagePullPolicy: Always
+          args: ["--cpu", "100"]
+          resources:
+              requests:
+                cpu: "0.3"
+              limits:
+                cpu: "1"
+      nodeSelector:
+        nodeassignment: 10.0.11.62

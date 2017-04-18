@@ -1,0 +1,58 @@
+* with 100 cpu-stress container
+* middletier and stress on one separate node
+* args: ["--cpu", "10"]
+* stress: no limit
+
+[fedora@k8s-tz-1 scripts]$ python run-locust2.py
+('2017-04-15 16:42:44', 1492274564, 'Users=', 3, 'Duration=', 3, 'min')
+('2017-04-15 16:45:44', 1492274744, 'Users=', 5, 'Duration=', 3, 'min')
+('2017-04-15 16:48:44', 1492274924, 'Users=', 10, 'Duration=', 3, 'min')
+('2017-04-15 16:51:44', 1492275104, 'Users=', 20, 'Duration=', 3, 'min')
+('2017-04-15 16:54:44', 1492275284, 'Users=', 50, 'Duration=', 3, 'min')
+('2017-04-15 16:57:44', 1492275464, 'Users=', 100, 'Duration=', 3, 'min')
+('2017-04-15 17:00:44', 1492275644, 'Users=', 150, 'Duration=', 3, 'min')
+('2017-04-15 17:03:45', 1492275825, 'Users=', 200, 'Duration=', 3, 'min')
+('2017-04-15 17:06:45', 1492276005, 'Users=', 250, 'Duration=', 3, 'min')
+('2017-04-15 17:09:45', 1492276185, 'Users=', 300, 'Duration=', 3, 'min')
+('2017-04-15 17:12:45', 1492276365, 'Users=', 350, 'Duration=', 3, 'min')
+('2017-04-15 17:15:45', 1492276545, 'Users=', 400, 'Duration=', 3, 'min')
+('2017-04-15 17:18:45', 1492276725, 'Users=', 500, 'Duration=', 3, 'min')
+('2017-04-15 17:21:45', 1492276905, 'Users=', 600, 'Duration=', 3, 'min')
+
+DB: k8s, Query: SELECT value as cpuusage_middle FROM "cpu/usage_rate" WHERE pod_name =~ /middle.*/ ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as memusage_middle FROM "memory/usage" WHERE pod_name =~ /middle.*/  ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as cpuusage_server FROM "cpu/usage_rate" WHERE pod_name =~ /server.*/ ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as memusage_server FROM "memory/usage" WHERE pod_name =~ /server.*/  ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as cpuusage_edge1 FROM "cpu/usage_rate" WHERE pod_name =~ /edge-8vsjk.*/ ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as memusage_edge1 FROM "memory/usage" WHERE pod_name =~ /edge-8vsjk.*/  ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as cpuusage_edge2 FROM "cpu/usage_rate" WHERE pod_name =~ /edge-sjsht.*/ ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as memusage_edge2 FROM "memory/usage" WHERE pod_name =~ /edge-sjsht.*/  ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as nodecpu61 FROM "cpu/node_utilization" WHERE nodename =~ /.*61/ ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as nodecpu62 FROM "cpu/node_utilization" WHERE nodename =~ /.*62/ ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as nodecpu63 FROM "cpu/node_utilization" WHERE nodename =~ /.*63/ ORDER BY DESC LIMIT 10000
+DB: k8s, Query: SELECT value as nodecpu64 FROM "cpu/node_utilization" WHERE nodename =~ /.*64/ ORDER BY DESC LIMIT 10000
+DB: locust, Query: SELECT user_count as locustusers FROM user_count ORDER BY DESC LIMIT 10000
+DB: locust, Query: SELECT status_200_count as status_200_count1, status_500_count as status_500_count1, status_0_count as status_0_count1, status_other_count as status_other_count1 FROM test_stats WHERE hostname =~ /.*locust-worker-0c3pc.*/ ORDER BY DESC LIMIT 10000
+DB: locust, Query: SELECT status_200_count as status_200_count2, status_500_count as status_500_count2, status_0_count as status_0_count2, status_other_count as status_other_count2 FROM test_stats WHERE hostname =~ /.*locust-worker-6qf25.*/ ORDER BY DESC LIMIT 10000
+
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: cpu-stress
+  labels:
+    name: cpu-stress
+spec:
+  selector:
+    name: cpu-stress
+  template:
+    metadata:
+      labels:
+        name: cpu-stress
+    spec:
+      containers:
+        - name: cpu-stress
+          image: timz/stress
+          imagePullPolicy: Always
+          args: ["--cpu", "10"]
+      nodeSelector:
+        nodeassignment: 10.0.11.62

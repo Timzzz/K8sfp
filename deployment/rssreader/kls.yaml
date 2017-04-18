@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kls
+  labels:
+    name: kls
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    name: kls-http
+    nodePort: 31020
+  - port: 22
+    name: kls-ssh
+    nodePort: 31021
+  selector:
+    name: kls
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: kls
+  labels:
+    name: kls
+spec:
+  replicas: 1
+  selector:
+    name: kls
+  template:
+    metadata:
+      labels:
+        name: kls
+    spec:
+      containers:
+      - name: kls
+        image: kieker/kieker-logging-server
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 22
+        - containerPort: 8080
+        env:
+          - name: KLS_JMS_HOST
+            value: activemq
+          - name: KLS_JMS_PORT
+            value: '61616'
+          - name: KLS_JMS_QUEUE
+            value: kieker
+          - name: KLS_INFLUXDB_ENABLED
+            value: "true"
+          - name: KLS_LOGGER_ENABLED
+            value: 'false'
+          - name: KLS_INFLUXDB_URL
+            value: 'http://172.16.22.4'
+          - name: KLS_INFLUXDB_PORT
+            value: '8086'
+          - name: KLS_INFLUXDB_USERNAME
+            value: 'root'
+          - name: KLS_INFLUXDB_PASSWORD
+            value: 'root'
+          - name: KLS_INFLUXDB_DATABASE_NAME
+            value: 'kieker'
