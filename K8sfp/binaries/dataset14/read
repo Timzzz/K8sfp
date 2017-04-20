@@ -1,0 +1,17 @@
+* with 15 cpu-stress containers
+* stress and middletier on one node, otherwise no containers on that node
+[fedora@k8s-tz-1 scripts]$ python run-locust2.py
+('2017-04-20 17:21:25', 1492708885, 'Users=', 3, 'Duration=', 3, 'min')
+('2017-04-20 17:24:25', 1492709065, 'Users=', 5, 'Duration=', 3, 'min')
+('2017-04-20 17:27:25', 1492709245, 'Users=', 10, 'Duration=', 3, 'min')
+('2017-04-20 17:30:26', 1492709426, 'Users=', 20, 'Duration=', 3, 'min')
+('2017-04-20 17:33:26', 1492709606, 'Users=', 50, 'Duration=', 3, 'min')
+('2017-04-20 17:36:26', 1492709786, 'Users=', 100, 'Duration=', 3, 'min')
+('2017-04-20 17:39:26', 1492709966, 'Users=', 150, 'Duration=', 3, 'min')
+('2017-04-20 17:42:26', 1492710146, 'Users=', 200, 'Duration=', 3, 'min')
+('2017-04-20 17:45:26', 1492710326, 'Users=', 250, 'Duration=', 3, 'min')
+('2017-04-20 17:48:26', 1492710506, 'Users=', 300, 'Duration=', 3, 'min')
+('2017-04-20 17:51:26', 1492710686, 'Users=', 350, 'Duration=', 3, 'min')
+('2017-04-20 17:54:26', 1492710866, 'Users=', 400, 'Duration=', 3, 'min')
+('2017-04-20 17:57:26', 1492711046, 'Users=', 500, 'Duration=', 3, 'min')
+('2017-04-20 18:00:27', 1492711227, 'Users=', 600, 'Duration=', 3, 'min')

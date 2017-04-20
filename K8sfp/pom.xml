@@ -14,5 +14,6 @@
     <module>K8sfpEvaluator</module>
     <module>K8sFpFaultController</module>
     <module>K8sFpTpFpEvaluator</module>
+    <module>K8sfpInfluxMeasureJoin</module>
   </modules>
 </project>

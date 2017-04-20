@@ -8,6 +8,7 @@ import org.k8sfp.common.config.InfluxDbDataSourceConfig;
 import org.k8sfp.common.datasources.influxDb.DbEntry;
 import org.k8sfp.common.datasources.influxDb.DbFetcher;
 import org.k8sfp.interfaces.IK8sDataElement;
+import org.k8sfp.interfaces.IK8sDataElementTimeseries;
 import org.k8sfp.interfaces.IK8sDataSourceConfig;
 import org.k8sfp.interfaces.IK8sTimeSeriesDataSource;
 
@@ -37,6 +38,10 @@ public class InfluxDbDataSource implements IK8sTimeSeriesDataSource {
 		if (data == null)
 			return null;
 		return new ArrayList<IK8sDataElement>(data);
+	}
+	
+	public void writeData(String measureName, List<IK8sDataElementTimeseries> data, List<String> fields) {
+		this.db.writeData(measureName, data, fields);
 	}
 	
 	@Override

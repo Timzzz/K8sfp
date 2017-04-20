@@ -34,4 +34,4 @@ spec:
             - name: LOCUST_FILE_URL
               value: 'https://raw.githubusercontent.com/Timzzz/K8sfp/master/deployment/lcust/locustfile.py'
       nodeSelector:
-        nodeassignment: 10.0.11.64
+        nodeassignment: 10.0.11.63

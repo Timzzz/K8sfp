@@ -41,7 +41,13 @@ public class InfluxDbPull {
 	
 	public static void main(String[] args) {
 		System.out.println("InfluxDbPull start..");
+		new InfluxDbPull().Run(getPullConfig());
 		
+		System.out.println("Done.");
+		
+	}
+	
+	public static InfluxDbPullConfig getPullConfig() {
 		InfluxDbPullPathConfig pathConf = XmlSerializer.deserialize(CONFIG_PATH, InfluxDbPullPathConfig.class);
 		if (pathConf == null || pathConf.filePath == null) {
 			pathConf = InfluxDbPullPathConfig.DEFAULT;
@@ -52,10 +58,7 @@ public class InfluxDbPull {
 			System.out.println("Creating default Config.");
 			XmlSerializer.serialize(pathConf.filePath, InfluxDbPullConfig.DEFAULT);
 		}
-		new InfluxDbPull().Run(conf);
-		
-		System.out.println("Done.");
-		
+		return conf;
 	}
 	
 	/**

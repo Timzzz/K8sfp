@@ -43,4 +43,4 @@ spec:
               containerPort: 5558
               protocol: TCP
       nodeSelector:
-          nodeassignment: 10.0.11.64
+          nodeassignment: 10.0.11.63

@@ -43,11 +43,6 @@ import okhttp3.Route;
  *
  */
 public class DbFetcher {
-	// private static final String containerQuery = "SELECT value,
-	// container_name FROM cpu_usage_total WHERE container_name !~ /\\/.*/ GROUP
-	// BY container_name ORDER BY DESC LIMIT 1";
-	// private static final String cpuQuery = "SELECT value / 1000000 FROM %s
-	// WHERE container_name='%s' GROUP BY * ORDER BY DESC LIMIT %d";
 	private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	
 	static {
@@ -61,11 +56,6 @@ public class DbFetcher {
 		this.conf = conf;
 		influxDB = authenticate(conf.isUseProxy());
 	}
-	
-	/*
-	 * public void updateConfig(boolean useProxy) { influxDB =
-	 * authenticate(useProxy); }
-	 */
 	
 	class Auth implements Authenticator {
 		private final String username;
@@ -100,7 +90,6 @@ public class DbFetcher {
 	}
 	
 	public List<DbEntry> GetData() {
-		// InfluxDB influxDB = authenticate(true);
 		String dbName = conf.getDbName();
 		System.out.println(String.format("DB: %s, Query: %s", conf.getDbName(), conf.getRequestQuery()));
 		Map<String, List<DbEntry>> entries = GetValues(influxDB, dbName);
@@ -226,13 +215,6 @@ public class DbFetcher {
 			String[] split = ts.split("\\.");
 			ts = split[0] + "Z";
 		}
-		/*
-		 * String[] split = ts.split("[\\.Z]"); if (split.length < 2) { throw
-		 * new ParseException("Format not valid", 0); } long val =
-		 * Long.parseLong(split[split.length - 1]); val *= 1e-6;
-		 * split[split.length - 1] = "" + val; ts = split[0]; for (int i = 1; i
-		 * < split.length; ++i) { ts += "." + split[i]; } ts += "Z";
-		 */
 		return utcDateFormat.parse(ts);
 	}
 	

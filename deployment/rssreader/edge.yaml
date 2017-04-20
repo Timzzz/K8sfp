@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: edge
+  labels:
+    name: edge
+spec:
+  type: NodePort
+  ports:
+  - port: 9090
+    name: http
+    nodePort: 31000
+  selector:
+    name: edge
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: edge
+  labels:
+    name: edge
+spec:
+  replicas: 1
+  selector:
+    name: edge
+  template:
+    metadata:
+      labels:
+        name: edge
+    spec:
+      containers:
+      - name: edge
+        image: hora/recipes-rss-edge-kieker:0.4
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9090
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: 500M
+          limits:
+            cpu: "1"
+            memory: 2000M
+      nodeSelector:
+          nodeassignment: 10.0.11.62

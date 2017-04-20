@@ -50,8 +50,8 @@ public class InfluxDbPullConfig implements Serializable {
 		DEFAULT = new InfluxDbPullConfig(false, cItems, pullItems, keyList);
 	}
 	
-	@Expose
-	public boolean useProxy;
+	// @Expose
+	// public boolean useProxy;
 	
 	@XStreamAlias("DBConfigList")
 	public static class ConfList {
@@ -69,7 +69,7 @@ public class InfluxDbPullConfig implements Serializable {
 	public InfluxDbPullConfig(boolean useProxy, List<InfluxDbDataSourceConfigItem> conf,
 	        ArrayList<InfluxDbPullConfigItem> queries, List<String> keyList) {
 		super();
-		this.useProxy = useProxy;
+		// this.useProxy = useProxy;
 		this.conf = conf;// conf.toArray(new InfluxDbDataSourceConfigItem[0]);
 		this.queries = queries;// queries.toArray(new
 		                       // InfluxDbPullConfigItem[0]);
