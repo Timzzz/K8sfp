@@ -3,6 +3,7 @@
 import time
 import json
 import requests
+import random
 #from influxdb import InfluxDBClient
 
 # IP of one of the k8s nodes
@@ -12,6 +13,14 @@ locust_master_port = "31050"
 # (num_users, duration in minutes)
 profile = [(3,3),(5,3),(10,3),(20,3),(50,3),(100,3),(150,3),(200,3),(250,3),(300,3),(350,3),(400,3),(500,3),(600,3)]
 
+def create_profile(count, maxUsers):
+    intervals = []
+    max_interval = 0
+    for p in range(count):
+        max_interval += random.randint(0, int(maxUsers / int(count/2)))
+        intervals.append(new_interval)
+    print("profile: ", intervals)
+    
 def change_workload(num_users):
     if (num_users <= 0):
         r = requests.get("http://" + k8s_node_ip + ":" + locust_master_port + "/stop")
@@ -25,4 +34,5 @@ for p in profile:
     time.sleep(p[1]*60)
 
 # Stop at the end
-change_workload(0)
+#change_workload(0)
+create_profile(14, 600)
