@@ -1,4 +1,7 @@
 * with 15 cpu-stress containers
+* middletier and stress on one separate node
+* args: ["--cpu", "100"]
+
 * stress and middletier on one node, otherwise no containers on that node
 [fedora@k8s-tz-1 scripts]$ python run-locust2.py
 ('2017-04-20 17:21:25', 1492708885, 'Users=', 3, 'Duration=', 3, 'min')
