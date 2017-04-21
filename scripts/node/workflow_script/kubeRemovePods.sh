@@ -1,0 +1,1 @@
+kubectl delete pod $(kubectl get po | tr ' ' '\n' | grep $1)

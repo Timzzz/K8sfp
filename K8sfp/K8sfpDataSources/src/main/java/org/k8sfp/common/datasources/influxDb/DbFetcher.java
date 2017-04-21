@@ -186,18 +186,24 @@ public class DbFetcher {
 				if (r.getSeries() == null) {
 					continue;
 				}
+				int seriesCount = 0;
 				for (Series s : r.getSeries()) {
+					seriesCount++;
 					if (s.getValues() == null) {
 						continue;
+					}
+					String seriesName = "";
+					if (r.getSeries().size() > 1) {
+						seriesName = "" + seriesCount;
 					}
 					for (List<Object> objList : s.getValues()) {
 						if (objList != null && objList.size() >= 1) {
 							Date d = parseTime(objList.get(0).toString());
 							DbEntry e = new DbEntry(d);
 							for (int i = 1; i < objList.size(); ++i) {
-								e.getColumns().put(s.getColumns().get(i), objList.get(i));
+								e.getColumns().put(s.getColumns().get(i) + seriesName, objList.get(i));
 							}
-							put(entries, s.getName(), e);
+							put(entries, seriesName, e);
 						}
 					}
 				}

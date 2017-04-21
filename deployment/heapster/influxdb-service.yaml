@@ -8,7 +8,7 @@ metadata:
     # kubernetes.io/cluster-service: 'true'
     kubernetes.io/name: influxdb-mon
   name: influxdb-mon
-  namespace: monitoring
+  namespace: default
 spec:
   type: NodePort
   ports:

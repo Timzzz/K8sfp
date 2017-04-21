@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,9 +39,18 @@ public class InfluxDbPull {
 	private static final String CONFIG_PATH = "./config/selection.conf";
 	
 	private HashMap<String, IK8sTimeSeriesDataSource> connections = new HashMap<>();
+	private static String outFilePath = "eventlog.csv";
 	
 	public static void main(String[] args) {
 		System.out.println("InfluxDbPull start..");
+		System.out.println("USAGE: <Program> [OutputFile]");
+		System.out.println("Parameters: " + Arrays.toString(args));
+		
+		if (args.length > 0) {
+			outFilePath = args[0];
+			System.out.println("Out-File: " + outFilePath);
+		}
+		
 		new InfluxDbPull().Run(getPullConfig());
 		
 		System.out.println("Done.");
@@ -70,7 +80,7 @@ public class InfluxDbPull {
 		
 		List<String> keyList = pullConfig.keyList;
 		List<IK8sDataElement> dataMerged = getMergedData(pullConfig);
-		writeToCsv(dataMerged, "eventlog.csv", keyList);
+		writeToCsv(dataMerged, outFilePath, keyList);
 	}
 	
 	public List<IK8sDataElement> getMergedData(InfluxDbPullConfig pullConfig) {
@@ -112,6 +122,9 @@ public class InfluxDbPull {
 	private static List<IK8sDataElement> combineMeasurements(List<IK8sDataElement> data, List<IK8sDataElement> data1) {
 		if (data1 == null || data1.size() == 0)
 			return data;
+		if (data == null || data.size() == 0)
+			return data1;
+		
 		List<IK8sDataElement> res = new ArrayList<IK8sDataElement>();
 		for (IK8sDataElement it : data) {
 			IK8sDataElementTimeseries itt = (IK8sDataElementTimeseries) it;
@@ -144,23 +157,51 @@ public class InfluxDbPull {
 		try {
 			writer = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));
 			IK8sDataElementTimeseries first = (IK8sDataElementTimeseries) list.get(0);
+			
+			List<String> actualKeyList = new ArrayList<>();
 			for (String key : keyList) {
-				writer.print(key + "\t");
+				boolean isWritten = false;
+				if (list.size() > 0) {
+					IK8sDataElementTimeseries it = (IK8sDataElementTimeseries) list.get(0);
+					for (String col : it.getColumns().keySet()) {
+						if (col.contains(key)) {
+							writer.print(col + "\t");
+							isWritten = true;
+							actualKeyList.add(col);
+						}
+					}
+				}
+				if (!isWritten) {
+					writer.print(key + "\t");
+					actualKeyList.add(key);
+				}
 			}
 			writer.println();
 			
 			for (int i = 0; i < list.size(); ++i) {
 				IK8sDataElementTimeseries it = (IK8sDataElementTimeseries) list.get(i);
 				List<String> values = new ArrayList<String>();
-				for (String key : keyList) {
+				for (String key : actualKeyList) {
 					Object s = "null";
-					if (it.getColumns().containsKey(key)) {
-						s = it.getColumns().get(key);
-					}
 					if (s instanceof Date) {
 						s = utcDateFormat.format(s);
+						writer.print(s + "\t");
+					} else {
+						if (it.getColumns().containsKey(key)) {
+							s = it.getColumns().get(key);
+						} else {
+							s = "null";
+						}
+						writer.print(s + "\t");
+						
+						// for (String val : it.getColumns().keySet()) {
+						// if (val.contains(key)) {
+						// s = it.getColumns().get(val);
+						// writer.print(s + "\t");
+						// }
+						// }
+						
 					}
-					writer.print(s + "\t");
 				}
 				writer.println();
 			}

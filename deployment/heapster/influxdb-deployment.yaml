@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: influxdb-mon
-  namespace: monitoring
+  namespace: default
 spec:
   replicas: 1
   template:
