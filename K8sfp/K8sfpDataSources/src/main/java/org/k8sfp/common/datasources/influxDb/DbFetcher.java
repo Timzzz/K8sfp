@@ -203,7 +203,7 @@ public class DbFetcher {
 							for (int i = 1; i < objList.size(); ++i) {
 								e.getColumns().put(s.getColumns().get(i) + seriesName, objList.get(i));
 							}
-							put(entries, seriesName, e);
+							put(entries, s.getName() + seriesName, e); // seriesName
 						}
 					}
 				}
