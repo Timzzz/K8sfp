@@ -48,44 +48,52 @@ predict <- function (x, doHoltWinters){
 	return(results);
 }
 
+plot_holtwinters <- function (data) {
+	resHoltWinters <- predict(data, 1)							# predict
+	datafore <- HoltWinters(data, gamma=FALSE)
+	data2 <- forecast.HoltWinters(datafore, h=forecastPoints)
+
+	out=paste(outname,"_holtwinters.pdf", sep="") 
+	pdf(out)
+	plot.forecast(data2, main="Holt-Winters Forecast", 
+		xlab=xDesc, ylab=yDesc)
+	lines(resHoltWinters, col="blue")
+	grid (NULL,NULL, lty = "dashed") 
+	return resHoltWinters
+}
+
+plot_arima <- function (data) {
+	#ARIMA
+	datadiff <- diff(data, difference=1)	# for d parameter
+	datadiffts <- ts(data)					# timeseries
+	datadifftsarima <- arima(datadiffts, order=c(2,1,0))
+	datadifftsarimafc <- forecast.Arima(datadifftsarima, h=forecastPoints)
+
+	out=paste(outname,"_diff.pdf", sep="") 
+	pdf(out)
+	plot(datadiff, main="Plotted Difference", 
+		xlab=xDesc, ylab=yDesc)
+	lines(datadiff)
+	#fcast <- (unlist(datadifftsarimafc$mean))
+	#tail(data, n=1)
+	#fcast <- c(tail(data, n=1), tail(data, n=1)+cumsum(fcast))
+	#fcast2 <- datadifftsarimafc #c(data, fcast)
+	res <- predict(data, 0)
+
+	out=paste(outname,"_arima.pdf", sep="") 
+	pdf(out)
+	plot(datadifftsarimafc, main="ARIMA Forecast", 
+		xlab=xDesc, ylab=yDesc)#, xlim=c(0,30), ylim=c(0,1.5))
+	#lines(data, type="o")
+	lines(res, col="blue")
+	grid (NULL,NULL, lty = "dashed") 
+	return res
+}
+
 data <- scan(args[1])
 data = data / 1000 #(data-min(data))/(max(data)-min(data)) 	# normalize data
-resHoltWinters <- predict(data, 1)							# predict
-datafore <- HoltWinters(data, gamma=FALSE)
-
-data2 <- forecast.HoltWinters(datafore, h=forecastPoints)
-
-out=paste(outname,"_holtwinters.pdf", sep="") 
-pdf(out)
-plot.forecast(data2, main="Holt-Winters Forecast", 
-	xlab=xDesc, ylab=yDesc)
-lines(resHoltWinters, col="blue")
-grid (NULL,NULL, lty = "dashed") 
-
-#ARIMA
-datadiff <- diff(data, difference=1)	# for d parameter
-datadiffts <- ts(data)					# timeseries
-datadifftsarima <- arima(datadiffts, order=c(2,1,0))
-datadifftsarimafc <- forecast.Arima(datadifftsarima, h=forecastPoints)
-
-out=paste(outname,"_diff.pdf", sep="") 
-pdf(out)
-plot(datadiff, main="Plotted Difference", 
-	xlab=xDesc, ylab=yDesc)
-lines(datadiff)
-#fcast <- (unlist(datadifftsarimafc$mean))
-#tail(data, n=1)
-#fcast <- c(tail(data, n=1), tail(data, n=1)+cumsum(fcast))
-#fcast2 <- datadifftsarimafc #c(data, fcast)
-res <- predict(data, 0)
-
-out=paste(outname,"_arima.pdf", sep="") 
-pdf(out)
-plot(datadifftsarimafc, main="ARIMA Forecast", 
-	xlab=xDesc, ylab=yDesc)#, xlim=c(0,30), ylim=c(0,1.5))
-#lines(data, type="o")
-lines(res, col="blue")
-grid (NULL,NULL, lty = "dashed") 
+resHoltWinters <- plot_holtwinters(data)
+res <- plot_arima(data)
 
 ### WRITE TO CSV
 padArray <- function(array, arrayForFill) {
