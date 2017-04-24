@@ -58,8 +58,8 @@ plot_holtwinters <- function (data) {
 	plot.forecast(data2, main="Holt-Winters Forecast", 
 		xlab=xDesc, ylab=yDesc)
 	lines(resHoltWinters, col="blue")
-	grid (NULL,NULL, lty = "dashed") 
-	return resHoltWinters
+	grid(NULL, NULL, lty = "dashed") 
+	return(resHoltWinters)
 }
 
 plot_arima <- function (data) {
@@ -87,15 +87,9 @@ plot_arima <- function (data) {
 	#lines(data, type="o")
 	lines(res, col="blue")
 	grid (NULL,NULL, lty = "dashed") 
-	return res
+	return(res)
 }
 
-data <- scan(args[1])
-data = data / 1000 #(data-min(data))/(max(data)-min(data)) 	# normalize data
-resHoltWinters <- plot_holtwinters(data)
-res <- plot_arima(data)
-
-### WRITE TO CSV
 padArray <- function(array, arrayForFill) {
 	i=1	# filling up leading / trailing zeros ..
 	j=1
@@ -111,6 +105,12 @@ padArray <- function(array, arrayForFill) {
 	return(res);
 }
 
+data <- scan(args[1])
+data = data / 1000 #(data-min(data))/(max(data)-min(data)) 	# normalize data
+resHoltWinters <- plot_holtwinters(data)
+res <- plot_arima(data)
+
+### WRITE TO CSV
 arimaforecasts = padArray(res, data)
 holtwintersforecasts = padArray(resHoltWinters, data)
 out=paste(outname,"_predictions.csv", sep="") 
