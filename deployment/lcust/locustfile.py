@@ -24,7 +24,8 @@ def job():
                         "status_200_count": status_200_count,
                         "status_500_count": status_500_count,
                         "status_0_count": status_0_count,
-                        "status_other_count": status_other_count
+                        "status_other_count": status_other_count,
+                        "hostname": hostname
                         }
                     }
                 ]
