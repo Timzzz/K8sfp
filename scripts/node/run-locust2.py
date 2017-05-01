@@ -20,9 +20,13 @@ def create_linear_profile(count, maxUsers, execTime):
         max_interval += random.randint(1, int(maxUsers / int(count/(2))))
         intervals.append((max_interval,execTime))
     if(max_interval > maxUsers):
-        for i in range(count):
-            intervals[i] = (max(0, intervals[i][0] - int((max_interval-maxUsers)/((count+1)/(i+1)))), execTime)
-    print("profile: ", intervals)
+    	for i in range(count+1):
+            new_val = max(0, intervals[i][0] - int((max_interval-maxUsers)/((count+1)/(i+1))))
+            intervals[i] = (new_val, execTime)
+    if(intervals[count][0] < maxUsers):	# reroll
+        intervals = create_linear_profile(count, maxUsers, execTime)
+    else:
+        print("profile: ", intervals)
     return intervals
         
 def change_workload(num_users):
@@ -34,11 +38,11 @@ def change_workload(num_users):
 
 intervals = create_linear_profile(15, 600, 3)
 
-#for p in profile:
-#    print(time.strftime("%Y-%m-%d %H:%M:%S"), int(time.time()), "Users=", p[0], "Duration=", p[1], "min")
-#    change_workload(p[0])
-#    time.sleep(p[1]*60)
+for p in profile:
+    print(time.strftime("%Y-%m-%d %H:%M:%S"), int(time.time()), "Users=", p[0], "Duration=", p[1], "min")
+    change_workload(p[0])
+    time.sleep(p[1]*60)
 
 # Stop at the end
-#change_workload(0)
+change_workload(0)
 
