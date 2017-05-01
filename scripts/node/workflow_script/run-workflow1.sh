@@ -14,8 +14,8 @@ function analyze {
 }
 
 function run {
-        run_number=$1
-        name="_RUN"$run_number
+        number=$1
+        name="_RUN"$number
 
         mkdir -p results
 
@@ -26,10 +26,8 @@ function run {
         echo "### Dropping DB locust..."
         #curl http://172.16.22.4:8086/query?q=DROP+DATABASE+"locust"
         #curl http://172.16.22.4:8086/query?q=CREATE+DATABASE+"locust"
-        #curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=drop database locust"
-        #curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=create database locust"
-        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "db=locust" --data-urlencode "q=DROP SERIES FROM /.*/"
-        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "db=kieker" --data-urlencode "q=DROP SERIES FROM /.*/"
+        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=drop database locust"
+        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=create database locust"
 
         echo "### restarting locust..."
         sh kubeRemovePods.sh locust-master

@@ -1,0 +1,2 @@
+* no stress, all runs have same locust profile
+* all containers deployed on same node
