@@ -14,48 +14,49 @@ function analyze {
 }
 
 function run {
-	run_number=$1
-	name="_RUN"$run_number
+        number=$1
+        name="_RUN"$number
 
-	mkdir results
+        mkdir -p results
 
-	echo "### Dropping DB k8s..."
-	#curl -XPOST 'http://172.16.38.2:8086/query' --data-urlencode "q=drop database k8s"
-	curl http://172.16.22.6:8086/query?q=DROP+DATABASE+"k8s"
+        echo "### Dropping DB k8s..."
+        #curl -XPOST 'http://172.16.84.6:8086/query' --data-urlencode "q=drop database k8s"
+        curl http://172.16.84.6:8086/query?q=DROP+DATABASE+"k8s"
 
-	echo "### Dropping DB locust..."
-	#curl http://172.16.22.4:8086/query?q=DROP+DATABASE+"locust"
-	#curl http://172.16.22.4:8086/query?q=CREATE+DATABASE+"locust"
-	curl -XPOST 'http://172.16.22.4:8086/query' --data-urlencode "q=drop database locust"
-	curl -XPOST 'http://172.16.22.4:8086/query' --data-urlencode "q=create database locust"
+        echo "### Dropping DB locust..."
+        #curl http://172.16.22.4:8086/query?q=DROP+DATABASE+"locust"
+        #curl http://172.16.22.4:8086/query?q=CREATE+DATABASE+"locust"
+        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=drop database locust"
+        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=create database locust"
 
-	echo "### restarting locust..."
-	sh kubeRemovePods.sh locust-master
-	sleep 10
-	sh kubeRemovePods.sh locust-worker
-	sleep 10
+        echo "### restarting locust..."
+        sh kubeRemovePods.sh locust-master
+        sleep 10
+        sh kubeRemovePods.sh locust-worker
+        sleep 10
 
-	echo "### waiting for timeout"
-	sleep 60
+        echo "### waiting for timeout"
+        sleep 60
 
-	echo "### running locust simulation..."
-	python run-locust2.py > "run-locust"$name".log"
+        echo "### running locust simulation..."
+        python run-locust2.py > "run-locust"$name".log"
 
-	echo "### collecting data..."
-	java -jar K8sfpEvaluator.jar "eventlog"$name".csv"
+        echo "### collecting data..."
+        java -jar K8sfpEvaluator.jar "eventlog"$name".csv"
 
-	#echo "### extracting data..."
-	#sh extractCsvRow.sh 2 "eventlog"$name".csv"
+        #echo "### extracting data..."
+        #sh extractCsvRow.sh 2 "eventlog"$name".csv"
 
-	#echo "### forcasting data..."
-	#analyze "eventlog"$name".csv" 2
+        #echo "### forcasting data..."
+        #analyze "eventlog"$name".csv" 2
 
-	echo "### moving data..."
-	mv *.csv data
-	mv *.log data
-	mv data results/data$name
+        echo "### moving data..."
+        mkdir -p data
+        mv *.csv data/
+        mv *.log data/
+        mv data results/data$name
 
-	echo "### Done!"
+        echo "### Done!"
 }
 
 display_usage() { 
@@ -74,10 +75,12 @@ fi
 run_number=$1
 run_count=$2
 
-for i in 1 .. $run_count
+echo "RUN NUMBER: $run_number"
+echo "RUN_COUNT: $run_count"
+
+for ((i=0; i<$run_count; i++))
 do
-	echo "### RUN $i STARTING"
-	run $run_number+$i-1
+        idx=$(($run_number+$i))
+        echo "### RUN $idx STARTING"
+        run $idx
 done
-
-

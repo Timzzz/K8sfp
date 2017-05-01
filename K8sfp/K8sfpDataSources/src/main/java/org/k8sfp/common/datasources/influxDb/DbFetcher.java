@@ -45,6 +45,13 @@ import okhttp3.Route;
 public class DbFetcher {
 	private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	
+	/**
+	 * area in which measures can be joined
+	 */
+	private static final long JOIN_DISTANCE_IN_SECONDS = 60;
+	
+	private static final long JOIN_TOLERANCE_IN_MILLISECONDS = 10000;
+	
 	static {
 		utcDateFormat.setTimeZone((TimeZone.getTimeZone("UTC")));
 	}
@@ -148,20 +155,20 @@ public class DbFetcher {
 			if (e == null) {
 				continue;
 			}
-			for (int i = 0; i < e.size(); ++i) { // iterate over all
-			                                     // measurements
-				DbEntry eToJoin = e.get(i);
-				for (int j = 0; j < jEntries.size(); ++j) { // iterate over all
-				                                            // rows in the
-				                                            // measurement
-					DbEntry joinTo = jEntries.get(j);
-					if (eToJoin.getTime().equals(joinTo.getTime()) // join
-					                                               // fields if
-					                                               // the date
-					                                               // is equal
-					                                               // or before
-					        || eToJoin.getTime().before(joinTo.getTime())) {
+			
+			for (int i = 0; i < jEntries.size(); ++i) {
+				DbEntry joinTo = jEntries.get(i);
+				// Subtract 1 minute
+				Date dateBefore = new Date(joinTo.getTime().getTime() - JOIN_DISTANCE_IN_SECONDS * 1000l);
+				for (int j = 0; j < e.size(); ++j) {
+					DbEntry eToJoin = e.get(j);
+					long diff = Math.abs(joinTo.getTime().getTime() - eToJoin.getTime().getTime());
+					if (joinTo.getTime().compareTo(eToJoin.getTime()) * eToJoin.getTime().compareTo(dateBefore) >= 0) {
 						joinTo.merge(eToJoin); // merge rows
+						break;
+					} else if (diff <= JOIN_TOLERANCE_IN_MILLISECONDS) {
+						joinTo.merge(eToJoin); // merge rows
+						break;
 					}
 				}
 			}
