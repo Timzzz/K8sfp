@@ -15,6 +15,7 @@ fi
 rowExtract=$1
 mkdir -p extract/
 rm ./extract/*extract.csv
+rm ./extract/combined.csv
 touch ./extract/combined.csv
 #touch ./extract/left.csv
 

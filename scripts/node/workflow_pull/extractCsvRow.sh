@@ -9,4 +9,4 @@ if [  $# -le 0 ]; then
 	exit 1
 fi 
 
-awk -F "\"*\t\"*" "{print \$$1}" $2
+awk -F "\"*[\t,]\"*" "{print \$$1}" $2
