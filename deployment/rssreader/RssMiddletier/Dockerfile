@@ -1,4 +1,5 @@
-FROM hora/recipes-rss-middletier-kieker:0.4
+FROM timz/rssmiddletier_kieker_base 
+#hora/recipes-rss-middletier-kieker:0.4
 
 RUN apt-get -y update && apt-get install -y zip && apt-get install -y unzip
 
