@@ -48,7 +48,7 @@ predict <- function (x, doHoltWinters, mode){
 		res <- data$mean[forecastPoints]
 		resUpper <- data$upper[forecastPoints]
 		print(res)
-		idx <- i #+ forecastPoints
+		idx <- i + forecastPoints
 		resultsL[j, ] <- c(idx, resLower)
 	    results[j, ] <- c(idx, res)
 	    resultsU[j, ] <- c(idx, resUpper)

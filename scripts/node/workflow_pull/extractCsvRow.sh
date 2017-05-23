@@ -1,7 +1,7 @@
 #!/bin/bash
 
 display_usage() { 
-	echo -e "\nUsage: <Program> <Row to extract>" 
+	echo -e "\nUsage: <Program> <Row to extract> <FILENAME>" 
 }
 
 if [  $# -le 0 ]; then 
@@ -9,4 +9,5 @@ if [  $# -le 0 ]; then
 	exit 1
 fi 
 
+echo $2
 awk -F "\"*[\t,]\"*" "{print \$$1}" $2
