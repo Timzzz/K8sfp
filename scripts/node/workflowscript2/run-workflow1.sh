@@ -21,25 +21,25 @@ function run {
 
         echo "### Dropping DB k8s..."
         #curl -XPOST 'http://172.16.84.6:8086/query' --data-urlencode "q=drop database k8s"
-        curl http://172.16.84.6:8086/query?q=DROP+DATABASE+"k8s"
+        #curl http://172.16.84.6:8086/query?q=DROP+DATABASE+"k8s"
 
         echo "### Dropping DB locust..."
         #curl http://172.16.22.4:8086/query?q=DROP+DATABASE+"locust"
         #curl http://172.16.22.4:8086/query?q=CREATE+DATABASE+"locust"
-        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=drop database locust"
-        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=create database locust"
+        #curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=drop database locust"
+        #curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=create database locust"
 
         echo "### restarting locust..."
-        sh kubeRemovePods.sh locust-master
-        sleep 10
-        sh kubeRemovePods.sh locust-worker
-        sleep 10
+        #sh kubeRemovePods.sh locust-master
+        #sleep 10
+        #sh kubeRemovePods.sh locust-worker
+        #sleep 10
 
         echo "### waiting for timeout"
-        sleep 60
+        #sleep 60
 
         echo "### running locust simulation..."
-        python run-locust2.py > "run-locust"$name".log"
+        #python run-locust2.py > "run-locust"$name".log"
 
         echo "### collecting data..."
         java -jar K8sfpEvaluator.jar "eventlog"$name".csv"
