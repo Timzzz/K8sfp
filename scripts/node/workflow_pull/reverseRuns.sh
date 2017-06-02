@@ -1,6 +1,6 @@
 
 display_usage() { 
-        echo -e "\nUsage: <Program> <FOLDER>" 
+        echo -e "\nUsage: <Program> <FILES>" 
 }
 
 if [  $# -le 0 ]; then 
@@ -12,13 +12,13 @@ if [[ $# == "--help" || $# == "-h" ]]; then
         exit 0
 fi
 
-rowExtract=$1
-mkdir -p extract/
-rm ./extract/*extract.csv
-rm ./extract/combined.csv
-touch ./extract/combined.csv
+#rowExtract=$1
+#mkdir -p extract/
+#rm ./extract/*extract.csv
+#rm ./extract/combined.csv
+#touch ./extract/combined.csv
 
-for dir in $1/*/*.csv
+for dir in $1
 do
     dir=${dir%*/}
     file=${dir##*/}
@@ -27,5 +27,5 @@ do
     #sh extractCsvRow.sh $rowExtract $dir > "extract/"$file".extract.csv"
 done
 
-rm temp.dat
+#rm temp.dat
 

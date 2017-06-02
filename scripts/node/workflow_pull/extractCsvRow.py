@@ -15,6 +15,7 @@ with open(args[1], "rb") as fp:
      	idx = row.index(args[2])
      	print idx
      	break;
+     data.append(args[1])
      data.append(args[2])
      for row in reader: # Iterate the remaining rows
     	data.append(row[idx])

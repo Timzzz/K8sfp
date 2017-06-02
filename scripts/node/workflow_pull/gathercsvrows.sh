@@ -26,8 +26,8 @@ do
     dir=${dir%*/}
     file=${dir##*/}
     echo "$file"
-    sh extractCsvRow.sh $rowExtract $dir > "extract/"$file".extract.csv"
-    #python extractCsvRow.py $dir $rowExtract "extract/"$file".extract.csv"
+    #sh extractCsvRow.sh $rowExtract $dir > "extract/"$file".extract.csv"
+    python extractCsvRow.py $dir $rowExtract "extract/"$file".extract.csv"
     count=$(($count+1))
 done
 

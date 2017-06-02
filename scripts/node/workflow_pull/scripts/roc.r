@@ -72,7 +72,7 @@ ar <- read.csv(in_arima)
 su <- read.csv(in_suc)
 fa <- read.csv(in_fails)
 
-arima_factor=0.9
+arima_factor=0.2
 arima_factor_old=arima_factor
 th=0.0001
 
@@ -84,13 +84,14 @@ ar[ar>1] <- 1
 ar[ar<0] <- 0
 
 metric <- calcMetric(ar, fm, arima_factor, th)
+#print(metric$ARM)
 #rates <- calcRates(metric$ARM[,1], metric$FM[,1])
 rates <- calcRates(metric$AVG, metric$AVGFM, th)
 
-doit=FALSE
+doit=TRUE
 if(doit==TRUE){
 	#arima_factor=0
-	len=10
+	len=20
 	tpr <- array(1:len+1)
 	fpr <- array(1:len+1)
 	
@@ -116,13 +117,14 @@ if(doit==TRUE){
 arima_factor=arima_factor_old
 
 par <- metric$ARM
-matplot(seq(1, length(par[, 1])), par[, -1], type="l", xlab="Minutes", ylab="Predicted Failure Probability")
+#print(par)
+#matplot(seq(1, length(par[, 1])), par[, -1], type="l", xlab="Minutes", ylab="Predicted Failure Probability")
 par <- metric$FM
-matplot(seq(1, length(par[, 1])), par[, -1], type="l", xlab="Minutes", ylab="Actual Failure Percentage")
+#matplot(seq(1, length(par[, 1])), par[, -1], type="l", xlab="Minutes", ylab="Actual Failure Percentage")
 
-plot(metric$AVG, type="l")
-lines(metric$AVGFM)
-lines(metric$ARM[,1], col="gray")
+#plot(metric$AVG, type="l", col="red", xlab="Minutes", ylab="Weight")
+#lines(metric$AVGFM, col="blue")
+#lines(metric$ARM[,1], col="gray")
 
-plot(rates$FPR, rates$TPR, ylim=c(0,1), xlim=c(0,1), type="o")
+#plot(rates$FPR, rates$TPR, ylim=c(0,1), xlim=c(0,1), type="o")
 
