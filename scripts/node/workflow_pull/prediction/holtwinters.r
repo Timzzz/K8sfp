@@ -1,4 +1,5 @@
 library("forecast")
+library("hydroGOF")
 
 options(echo=FALSE)
 args <- commandArgs(trailingOnly = TRUE)
@@ -7,9 +8,11 @@ xDesc = "Time (Minutes)"
 yDesc = "CPU"
 
 outname=args[1]
+outname=gsub("\\.","_",outname)
+
 forecastPoints = 5
-windowSize = 60
-startingPoint = 10
+windowSize = 2	
+startingPoint = 5
 
 createForecast <- function(data, doHoltWinters) {
 	if(doHoltWinters) {
@@ -47,7 +50,7 @@ predict <- function (x, doHoltWinters, mode){
 		resLower <- data$lower[forecastPoints]
 		res <- data$mean[forecastPoints]
 		resUpper <- data$upper[forecastPoints]
-		print(res)
+		#print(res)
 		idx <- i + forecastPoints
 		resultsL[j, ] <- c(idx, resLower)
 	    results[j, ] <- c(idx, res)
@@ -55,9 +58,25 @@ predict <- function (x, doHoltWinters, mode){
 	    i <- i + slide
 	    j <- j + 1
 	}
-	print(results)
+	#print(results)
 	return(list("lower" = resultsL, "mean" = results, "upper" = resultsU));
 }
+
+padArray <- function(array, arrayForFill) {
+	i=1	# filling up leading / trailing zeros ..
+	j=1
+	res = c(arrayForFill)
+	while(i<length(arrayForFill)) {
+		res[i] = arrayForFill[i]
+		if(array[j, 1] == i) {
+			res[i] = array[j, 2]
+			j = j+1
+		}
+		i = i+1
+	}
+	return(res);
+}
+
 
 data <- scan(args[1])
 data = data / 1000
@@ -74,6 +93,15 @@ lines(resHW$mean, col="blue")
 lines(resHW$upper, col="gray30", lty=2)
 grid (NULL,NULL, lty = "dashed") 
 
+fo = padArray(resHW$mean, data)
+mse <- mse(fo, data) #mean((data - hw)^2) #mse(resHW$mean, data)  # MSE
+mape <- mean(abs((data-fo)/data)*(100/length(data)))
+mad <- sum(abs(fo-data))
+msd <- sum(abs(fo-data)^2)
+print(paste(mse, mape, mad, msd, sep=","))
+
+#plot(msear)
+
 #ARIMA
 print("ARIMA")
 res <- predict(data, 0, 1)
@@ -87,25 +115,19 @@ lines(res$mean, col="blue")
 lines(res$upper, col="gray30", lty=2)
 grid (NULL,NULL, col="gray", lty=2) 
 
+fo = padArray(res$mean, data)
+mse <- mse(fo, data) #mean((data - hw)^2) #mse(resHW$mean, data)  # MSE
+mape <- mean(abs((data-fo)/data)*(100/length(data)))
+mad <- sum(abs(fo-data))
+msd <- sum(abs(fo-data)^2)
+print(paste(mse, mape, mad, msd, sep=","))
+
+
 #print(dataarima)
 #print(unlist(dataarima$mean))
 #str(dataarima)
 
 ### WRITE TO CSV
-padArray <- function(array, arrayForFill) {
-	i=1	# filling up leading / trailing zeros ..
-	j=1
-	res = c(arrayForFill)
-	while(i<length(arrayForFill)) {
-		res[i] = arrayForFill[i]
-		if(array[j, 1] == i) {
-			res[i] = array[j, 2]
-			j = j+1
-		}
-		i = i+1
-	}
-	return(res);
-}
 
 arimaforecasts = padArray(res$mean, data)
 holtwintersforecasts = padArray(resHW$mean, data)

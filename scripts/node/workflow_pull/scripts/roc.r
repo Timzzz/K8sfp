@@ -91,15 +91,18 @@ rates <- calcRates(metric$AVG, metric$AVGFM, th)
 doit=TRUE
 if(doit==TRUE){
 	#arima_factor=0
-	len=20
+	len=10
 	tpr <- array(1:len+1)
 	fpr <- array(1:len+1)
-	
+
+	lab <- array(1:len+1)	
+
 	#nums <- as.numeric(c("0", "0.0001", "0.001", "0.01", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "0.95", "0.96", "0.97", "0.985", "0.987", "0.99", "0.995", "0.997", "0.999", "1"))
 	#len=length(nums)
 	plot(1, type="o", col="red", ylim=c(0,1), xlim=c(0,1), xlab="False Positive Rate", ylab="True Positive Rate")
 	for(i in 1:(len+1)){	# alternate arima threshold
 		arima_factor=((i-1)/len)
+		lab[i]=arima_factor
 		#th = ((i-1)/(len*100))
 		print(paste(arima_factor, th))
 		metric <- calcMetric(ar, fm, arima_factor, th)
@@ -108,10 +111,11 @@ if(doit==TRUE){
 		fpr[i]=rates$FPR[length(rates$FPR)]
 		print(max(rates$TPR))
 		lines(rates$FPR, rates$TPR, col="gray")
-		points(rates$FPR, rates$TPR, col="gray")
+		#points(rates$FPR, rates$TPR, col="gray")
 	}
 	lines(fpr, tpr, type="l", col="blue")
 	points(fpr, tpr, type="p", col="red")
+	text(fpr, tpr, labels=lab, cex=.7, pos=3)
 	
 }
 arima_factor=arima_factor_old

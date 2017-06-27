@@ -24,5 +24,15 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/home/zwietatm/repos/K8sfp/K8sfp/libs/weka.jar"/>
 	<classpathentry kind="lib" path="/home/zwietatm/repos/K8sfp/K8sfp/libs/timeseriesForecasting1.0.24.jar"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

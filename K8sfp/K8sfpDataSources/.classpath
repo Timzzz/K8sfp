@@ -37,5 +37,15 @@
 	<classpathentry kind="lib" path="/home/zwietatm/repos/K8sfp/K8sfp/libs/xstream-1.4.9/lib/xstream/xom-1.1.jar"/>
 	<classpathentry kind="lib" path="/home/zwietatm/repos/K8sfp/K8sfp/libs/xstream-1.4.9/lib/xstream/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="/home/zwietatm/repos/K8sfp/K8sfp/libs/xstream-1.4.9/lib/xstream-1.4.9.jar"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

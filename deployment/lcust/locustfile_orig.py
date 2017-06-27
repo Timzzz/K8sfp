@@ -7,35 +7,9 @@ from influxdb import InfluxDBClient
 import os
 from requests.exceptions import ConnectionError
 import urllib2
-import schedule
-import time
-import socket
-
-hostname = socket.gethostname()
-
-def job():
-        json_body = [
-                {
-                    "measurement": "test_stats",
-                    "tags": {
-<<<<<<< HEAD
-                        "hostname": hostname
-=======
-                    	"hostname": hostname
->>>>>>> cfe0676b3aea89dfb0de10cab7f988db01614485
-                        },
-                    "fields": {
-                        "status_200_count": status_200_count,
-                        "status_500_count": status_500_count,
-                        "status_0_count": status_0_count,
-                        "status_other_count": status_other_count
-                        }
-                    }
-                ]
-        InfluxDBWriter.write(json_body)
 
 class MyTaskSet(TaskSet):
-    
+
     def on_start(self):
         self.user_id = randint(1,999999999)
 
@@ -123,35 +97,8 @@ class MyTaskSet(TaskSet):
     def deleteWsj(self):
         with self.client.post("/jsp/rss.jsp", {"delFeedUrl":"http://rssserver/wsj.xml", "username":self.user_id}, catch_response=True) as response:
             self.log_response(response)
-    
-    def log_response(self, response):
-        #self.log_response_all(response)
-        global status_200_count
-        global status_500_count
-        global status_0_count
-        global status_other_count
-        try:
-            if status_200_count is None:
-                status_200_count = 0
-        except NameError:
-            status_200_count = 0
-            status_500_count = 0
-            status_0_count = 0
-            status_other_count = 0
-            schedule.every(1).minutes.do(job)
-        
-        if(response.status_code == 200):
-            status_200_count = status_200_count + 1
-        elif(response.status_code == 500):
-            status_500_count = status_500_count + 1
-        elif(response.status_code == 0):
-            status_0_count = status_0_count + 1
-        else:
-            status_other_count = status_other_count + 1
-        
-        schedule.run_pending()
 
-    def log_response_all(self, response):
+    def log_response(self, response):
         json_body = [
                 {
                     "measurement": "test_results",
@@ -164,20 +111,13 @@ class MyTaskSet(TaskSet):
                         "body": response.request.body
                         },
                     "fields": {
-                        "status_code": str(response.status_code),
-                        "reason": response.reason,
-                        "elapsed": response.elapsed.total_seconds(),
-                        "url": response.request.url,
-                        "path_url": response.request.path_url,
-                        "method": response.request.method,
-                        "body": response.request.body
+                        "elapsed": response.elapsed.total_seconds()
                         }
                     }
                 ]
         InfluxDBWriter.write(json_body)
 
 class MyLocust(HttpLocust):
-    
     task_set = MyTaskSet
     min_wait = 5000
     max_wait = 10000
