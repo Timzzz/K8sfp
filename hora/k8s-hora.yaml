@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: hora
-        image: timz/rsshora:latest //hora/hora:latest
+        image: timz/rsshora:latest #hora/hora:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
