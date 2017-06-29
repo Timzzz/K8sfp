@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: hora
-        image: hora/hora:latest
+        image: timz/rsshora:latest //hora/hora:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -60,7 +60,7 @@ spec:
           - name: HORA_INFLUXDB_KIEKER_DB
             value: "kieker"
           - name: HORA_INFLUXDB_K8S_ADDR
-            value: "http://influxdb:8086"
+            value: "http://influxdb-mon:8086"
           - name: HORA_INFLUXDB_K8S_USERNAME
             value: "root"
           - name: HORA_INFLUXDB_K8S_PASSWORD
