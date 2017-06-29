@@ -1,0 +1,69 @@
+title = "Hora configuration"
+
+[prediction]
+	interval = "1m"
+	leadtime = "10m"
+	precision = "1ns"
+	batch = true
+	starttime = "Fri, 31 Mar 2017 13:10:00 GMT"
+	endtime = "Fri, 31 Mar 2017 16:25:00 GMT"
+[adm]
+    [adm.filewatcher]
+        enabled = false
+        path = "/tmp/adm.json"
+    [adm.restapi]
+        enabled = true
+		port = "8080"
+[cfp]
+    [cfp.service]
+	    threshold = 0.01
+		predictor = "arima"
+        history = "20m"
+    [cfp.responsetime]
+	    unit = "1ns"
+	    threshold = "100ms"
+		predictor = "arima"
+        history = "20m"
+		aggregation = "percentile"
+		aggregationvalue = 95
+	[cfp.errorrate]
+    [cfp.cpu]
+        threshold = 1000
+		predictor = "arima"
+        history = "20m"
+		aggregation = "percentile"
+		aggregationvalue = 95
+    [cfp.memory]
+      	threshold = 2000000000
+		predictor = "arima"
+        history = "20m"
+		aggregation = "percentile"
+		aggregationvalue = 95
+[fpm]
+    updateinterval = "10ms"
+[rserve]
+    hostname = "rserve"
+	port = 6311
+[influxdb]
+    [influxdb.kieker]
+        addr = "http://influxdb:8086"
+	    username = "root"
+	    password = "root"
+	    db = "kieker"
+    [influxdb.k8s]
+        addr = "http://influxdb:8086"
+	    username = "root"
+	    password = "root"
+	    db = "k8s"
+    [influxdb.locust]
+        addr = "http://localhost:8086"
+	    username = "root"
+	    password = "root"
+	    db = "locust"
+    [influxdb.hora]
+	    addr = "http://influxdb:8086"
+        username = "root"
+	    password = "root"
+	    db = "hora"
+[eval]
+	outdir = "/tmp/hora"
