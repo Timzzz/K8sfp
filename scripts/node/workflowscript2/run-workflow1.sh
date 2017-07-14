@@ -1,5 +1,7 @@
 #!/bin/bash
 
+INFLUX='172.16.23.10:8086'
+
 function analyze {
         mkdir -p data
         filen=$1
@@ -20,14 +22,17 @@ function run {
         mkdir -p results
 
         echo "### Dropping DB k8s..."
-        #curl -XPOST 'http://172.16.84.6:8086/query' --data-urlencode "q=drop database k8s"
-        curl http://172.16.84.6:8086/query?q=DROP+DATABASE+"k8s"
-
+        #curl -XPOST 'http://$INFLUX/query' --data-urlencode "q=drop database k8s"
+        #curl http://172.16.84.6:8086/query?q=DROP+DATABASE+"k8s"
+        curl -XPOST "http://{$INFLUX}/query" --data-urlencode "q=drop database k8s"
+        
         echo "### Dropping DB locust..."
-        #curl http://172.16.22.4:8086/query?q=DROP+DATABASE+"locust"
-        #curl http://172.16.22.4:8086/query?q=CREATE+DATABASE+"locust"
-        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=drop database locust"
-        curl -XPOST 'http://172.16.22.6:8086/query' --data-urlencode "q=create database locust"
+        curl -XPOST "http://$INFLUX/query" --data-urlencode "q=drop database locust"
+        curl -XPOST "http://$INFLUX/query" --data-urlencode "q=create database locust"
+
+	echo "### Dropping DB kieker..."
+        curl -XPOST "http://$INFLUX/query" --data-urlencode "q=drop database kieker"
+        curl -XPOST "http://$INFLUX/query" --data-urlencode "q=create database kieker"
 
         echo "### restarting locust..."
         sh kubeRemovePods.sh locust-master

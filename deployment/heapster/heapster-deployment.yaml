@@ -10,7 +10,7 @@ spec:
       labels:
         task: monitoring
         k8s-app: heapster
-        version: v6
+        #version: v6
     spec:
       containers:
       - name: heapster-mon
