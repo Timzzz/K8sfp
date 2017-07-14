@@ -134,6 +134,7 @@ MainLoop:
 			var cmd string
 			var response *client.Response
 			var err error
+			log.Printf("Dependency-Type: %s", depInfo.Caller.Type)
 			switch depInfo.Caller.Type {
 			case "responsetime":
 				aggregation := viper.GetString("cfp.responsetime.aggregation")
