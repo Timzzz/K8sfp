@@ -1,0 +1,3 @@
+* start with 2 middletier containers, 3 node-stress containers
+* at 19.31 : increase of cpu-stress container count to 9
+* result: fpm of observed middletier rises to 1!
